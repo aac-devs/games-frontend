@@ -1,7 +1,11 @@
+import { GlobalStyles } from "./global-styles";
+import { AppRouter } from "./routers/app.routes";
+
 export const App = () => {
   return (
-    <div>
-      <h1>App Games</h1>
-    </div>
+    <>
+      <GlobalStyles />
+      <AppRouter />
+    </>
   );
 };
