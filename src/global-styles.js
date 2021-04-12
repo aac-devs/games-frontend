@@ -43,6 +43,8 @@ body, html {
   padding: 0;
   font-family: 'Roboto', sans-serif, Helvetica, Arial;
   background-attachment: fixed;
+  background-color: ${backgroundColor.primary.dark};
+
 }
 
 #root{

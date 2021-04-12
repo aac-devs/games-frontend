@@ -7,129 +7,231 @@ Tamaños:
 - desktop: ancho: 400px - 520px, alto: 350px,
 */
 
+import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import {
+  setCurrentScreen,
+  startDeletingGame,
+  unloadDetailedGame,
+} from "../../actions/main.actions";
+import { backgroundColor, textColor } from "../../global-styles";
 
 const Container = styled.div`
-  /* outline: 1px solid black; */
-  /* border-radius: 10px; */
-  background-color: yellow;
+  background-color: ${backgroundColor.primary.normal};
   min-width: 300px;
   max-width: 400px;
   min-height: 350px;
   max-height: 400px;
-  /* width: 320px; */
-  /* height: 200px; */
   width: 100%;
-  /* height: 100%; */
-  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 7px rgba(250, 250, 250, 0.5);
+  position: relative;
+  transition: all 0.4s;
+  &:hover {
+    transform: scale(1.01);
+  }
   display: grid;
-  /* place-self: center; */
   grid-template-columns: 70% 30%;
-  grid-template-rows: 10% 1fr 15% 15%;
+  grid-template-rows: 10% 1fr 12% auto;
   grid-template-areas:
     "rls rtg"
     "img img"
     "ttl ttl"
     "gnr gnr";
-
-  /* grid-template-columns: repeat(5, 60px); */
-  /* grid-template-rows: repeat(1, calc(100% - 10px)); */
-  /* grid-template-areas:
-    "img img ttl ttl ttl"
-    "img img ttl ttl ttl"
-    "img img rls rls rtg"
-    "img img gnr gnr gnr"
-    "img img gnr gnr gnr"; */
-
-  @media (min-width: 635px) and (orientation: portrait) {
-    /* background-color: blue; */
-    /* height: 440px; */
-    /* grid-template-columns: repeat(4, 60px); */
-    /* grid-template-rows: repeat(14, 30px); */
-    /* grid-template-areas:
-      "img img img img img"
-      "img img img img img"
-      "img img img img img"
-      "img img img img img"
-      "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img"
-      "img img img img img"
-      "ttl ttl ttl ttl ttl"
-      "ttl ttl ttl ttl ttl"
-      "rls rls rls rtg rtg"
-      "gnr gnr gnr gnr gnr"
-      "gnr gnr gnr gnr gnr"; */
-  }
-
-  @media (min-width: 840px) and (orientation: landscape) {
-    background-color: blue;
-    /* height: 440px; */
-    /* grid-template-columns: repeat(4, 60px); */
-    /* grid-template-rows: repeat(14, 30px); */
-    /* grid-template-areas:
-      "rls rls rls rtg rtg"
-      "img img img img img"
-      "img img img img img"
-      "img img img img img"
-      "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img" */
-    /* "img img img img img"
-      "ttl ttl ttl ttl ttl"
-      "ttl ttl ttl ttl ttl"
-      "gnr gnr gnr gnr gnr"
-      "gnr gnr gnr gnr gnr"; */
-  }
-
-  @media (min-width: 1100px) {
-    background-color: green;
-  }
 `;
 
 const ImageSection = styled.div`
   grid-area: img;
-  /* outline: 1px solid black; */
-  /* border-radius: 8px; */
-  background-color: cyan;
+  /* background-color: cyan; */
   min-width: 40%;
   min-height: 40%;
-  /* @media (min-width: 635px) {
-    background-color: blue;
-  }
-  @media (min-width: 1100px) {
-    background-color: green;
-  } */
+
+  width: 100%;
+  height: 100%;
+  background-image: url(${(props) => props.image});
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+  filter: brightness(90%);
 `;
 
 const Title = styled.div`
   grid-area: ttl;
-  background-color: wheat;
+  place-self: center stretch;
+  /* background-color: dodgerblue; */
+  color: ${textColor.primary.light};
+  opacity: 1;
+  font-size: 24px;
+  padding: 0 10px;
+  /* margin-bottom: 7px; */
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+  overflow: hidden;
 `;
+
+const SpanLink = styled(Link)`
+  cursor: pointer;
+  color: ${textColor.primary.light};
+  text-decoration: none;
+  /* background-color: red; */
+`;
+
 const Released = styled.div`
   grid-area: rls;
-  background-color: thistle;
+  flex-grow: 1;
+  /* width: 85%; */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  /* background-color: thistle; */
+  padding: 0 10px;
+  h5 {
+    font-size: 12px;
+    /* margin-bottom: 5px; */
+    font-weight: 400;
+    color: ${backgroundColor.primary.light};
+    margin-right: 10px;
+  }
+  span {
+    padding: 0;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(180deg, #fff, #cfc);
+    color: #000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 const Rating = styled.div`
   grid-area: rtg;
-  background-color: dodgerblue;
+
+  width: 100%;
+  display: flex;
+  padding-right: 10px;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: flex-end;
+  /* background-color: dodgerblue; */
+  h5 {
+    font-size: 12px;
+    /* margin-bottom: 5px; */
+    font-weight: 400;
+    color: ${backgroundColor.primary.light};
+    /* color: ${textColor.primary.dark}; */
+    /* background-color: gray; */
+    margin-right: 10px;
+  }
+  span {
+    padding: 0;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-image: ${(props) => props.ratingColor};
+    color: ${textColor.primary.light};
+    /* background-color: yellow; */
+  }
 `;
 const Genres = styled.div`
   grid-area: gnr;
-  background-color: lime;
+
+  padding: 0 10px;
+  /* background-color: lime; */
+
+  h5 {
+    color: ${backgroundColor.primary.light};
+    font-size: 12px;
+    margin-bottom: 5px;
+    font-weight: 400;
+  }
 `;
 
-export const Card = () => {
+const GenresTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  /* overflow-x: visible; */
+  span {
+    margin: 0 10px 7px 0;
+    font-size: 14px;
+    color: ${textColor.primary.light};
+    text-decoration: underline;
+  }
+`;
+
+const Hr = styled.hr`
+  margin-bottom: 5px;
+  background-color: ${textColor.primary.dark};
+`;
+
+export const Card = ({
+  id,
+  image,
+  name,
+  released,
+  rating,
+  genres,
+  enableDelete,
+}) => {
+  const dispatch = useDispatch();
+
+  // const handleDeleteGame = (e) => {
+  //   e.stopPropagation();
+  //   dispatch(startDeletingGame(id));
+  // };
+  const ratingColor =
+    rating >= 4.5
+      ? "linear-gradient(180deg, #b4ec51, #429321)"
+      : rating >= 3
+      ? "linear-gradient(180deg, #649bff, #4354b9)"
+      : "linear-gradient(180deg, #ff5764, #f11a2a)";
+
+  const handleClearDetailedGame = () => {
+    console.log("clear detailed");
+    if (id.toString().startsWith("own")) {
+      dispatch(setCurrentScreen("detail-own"));
+    } else {
+      dispatch(setCurrentScreen("detail"));
+    }
+
+    dispatch(unloadDetailedGame());
+  };
+
   return (
     <Container>
-      <ImageSection></ImageSection>
-      <Title></Title>
-      <Released></Released>
-      <Genres></Genres>
-      <Rating></Rating>
+      <ImageSection
+        image={image !== "" ? image : "/no-image.jpg"}
+      ></ImageSection>
+      <Title>
+        <SpanLink onClick={handleClearDetailedGame} to={`/games/detail/${id}`}>
+          {name}
+        </SpanLink>
+      </Title>
+      <Released>
+        <h5>Released</h5>
+        <span>{dayjs(released).format("MMMM D, YYYY")}</span>
+      </Released>
+      <Genres>
+        <Hr />
+
+        <h5>Genres</h5>
+        <GenresTags>
+          {genres.map((genre) => (
+            <span key={genre.id}>{genre.name}</span>
+          ))}
+        </GenresTags>
+      </Genres>
+      <Rating ratingColor={ratingColor}>
+        <h5>Rating</h5>
+        <span>{rating}</span>
+      </Rating>
     </Container>
   );
 };

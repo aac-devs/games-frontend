@@ -1,193 +1,362 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { setSelectedOption } from "../../actions/components.actions";
+import {
+  changeSearchName,
+  setCurrentScreen,
+  setGoSearch,
+  startLoadingGames,
+  startSavingGame,
+  unloadDetailedGame,
+} from "../../actions/main.actions";
+import { backgroundColor, textColor } from "../../global-styles";
 
-const LogoMarca = styled.div`
-  width: 60px;
-  height: 60px;
-  background-color: #fff;
-  background-image: url("/logo-marca.png");
-  background-size: contain;
-  border-radius: 50%;
-  filter: brightness(80%);
-  box-shadow: 0px 0px 7px rgba(250, 250, 250, 0.5);
-  transition: all 0.3s;
-  background-position: center;
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.04);
+const SearchSection = styled.div`
+  visibility: ${(props) => props.visible};
+  background-color: ${(props) =>
+    props.focused ? "#fff" : `${backgroundColor.primary.light}`};
+  margin: 0 10px;
+  /* width: 100px; */
+  max-width: 500px;
+
+  flex-grow: 1;
+  height: 35px;
+  border-radius: 20px;
+  transition: all 0.5s;
+  form {
+    height: 100%;
+    padding: 0 8px 0 15px;
+    display: flex;
+    align-items: center;
+    input {
+      width: 60%;
+      color: ${(props) => (props.focused ? "#000" : "#ccc")};
+      background-color: transparent;
+      height: 80%;
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      transition: all 0.5s;
+      &:hover {
+        color: #000;
+      }
+    }
+    i {
+      color: gray;
+      padding: 3px;
+      cursor: pointer;
+    }
   }
-  position: absolute;
-  top: 5px;
-  left: 5px;
+  &:hover {
+    background-color: #fff;
+  }
+  &:focus {
+    background-color: #fff;
+  }
+  @media (max-width: 768px) {
+    /* margin-right: 100px; */
+  }
 `;
 
-const NavContainer = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1100px;
-  margin: 0 auto;
+const Container = styled.nav`
   height: 80px;
+  width: 100%;
   padding: 0 20px;
-
-  .custom-link {
-    text-decoration: none;
-  }
-
-  .logo {
-    font-size: 30px;
-    font-weight: 600;
-    text-decoration: none;
-    color: #fff;
-    background-color: red;
-    font-family: "Poppins", sans-serif;
-  }
-
-  ul {
-    display: flex;
-    /* margin-right: 40px; */
-    list-style: none;
-    background-color: palevioletred;
-  }
-
-  li {
-    font-size: 18px;
-    margin: 0 10px;
-    /* line-height: 80px; */
-    text-transform: uppercase;
-    width: max-content;
-  }
-
-  .nav-link {
-    padding: 8px 12px;
-    border-radius: 3px;
-    color: #fff;
-  }
-  .nav-link:hover,
-  .nav-menu-link_active {
-    background-color: #034574;
-    transition: 0.5s;
-  }
-
-  .toggle-button {
-    color: white;
-    background: none;
-    border: none;
-    font-size: 30px;
-    padding: 0 20px;
-    /* line-height: 60px; */
-    display: none;
-    cursor: pointer;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  position: relative;
+  box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9);
 
   @media (max-width: 768px) {
     height: 60px;
+  }
+`;
 
-    .logo {
-      /* font-size: 25px; */
-      /* padding: 0 20px; */
-      /* line-height: 60px; */
-    }
-    ul {
-      border-radius: 20px;
-      flex-direction: column;
-      align-items: center;
-      margin: 0;
-      background-color: #fff;
-      position: fixed;
-      left: 0;
-      top: 60px;
-      width: 50%;
-      padding: 20px;
-      height: calc(70% - 60px);
-      overflow-y: auto;
-      left: 100%;
-      transition: left 0.3s;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
-    }
-    li {
-      background-color: lime;
-      /* line-height: 70px; */
-      /* width: 100%; */
-    }
-    .nav-link {
-      /* line-height: 20px; */
-      /* display: block; */
-      background-color: gray;
-      /* width: 100%; */
-      color: #000;
-    }
-    .nav-link:hover,
-    .nav-menu-link_active {
-      background: none;
-      color: red;
-    }
-    .toggle-button {
-      display: block;
-    }
-    .toggle-button:focus:not(:focus-visible) {
-      outline: none;
-    }
-    .nav-menu-visible {
-      left: 50%;
+const CustomLink = styled(Link)`
+  text-decoration: none;
+  color: ${textColor.secondary.normal};
+`;
+
+const NavLogo = styled.div`
+  color: ${(props) => (props.enabled ? "#484848" : textColor.secondary.normal)};
+  text-shadow: 3px 3px 3px #000;
+
+  padding: 0;
+  font-size: 30px;
+  font-family: "Poppins", sans-serif;
+  /* background-color: pink; */
+  width: 150px;
+  min-width: 150px;
+  text-align: center;
+  @media (max-width: 768px) {
+    min-width: 130px;
+    width: 130px;
+    font-size: 25px;
+  }
+`;
+
+const NavUl = styled.ul`
+  display: flex;
+  position: relative;
+  align-items: center;
+  /* background-color: lime; */
+  overflow-y: visible;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 60px;
+    /* background-color: ${textColor.secondary.dark}; */
+    background-color: #fff;
+    /* height: calc(100% - 60px); */
+    height: max-content;
+    width: 250px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    padding: 10px 10px 0 10px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    transition: right 0.3s;
+    /* z-index: 1000; */
+  }
+`;
+
+const NavLi = styled(CustomLink)`
+  /* background-color: gray; */
+  list-style: none;
+  margin-left: 20px;
+  text-transform: uppercase;
+  width: max-content;
+  text-align: center;
+  font-size: 18px;
+  border-radius: 5px;
+  padding: 3px 8px 0 8px;
+  color: ${textColor.primary.dark};
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${backgroundColor.primary.light};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 10px;
+    height: 40px;
+    font-size: 24px;
+    border-radius: 15px;
+    padding-top: 8px;
+    transition: background-color 0.3s;
+    color: ${backgroundColor.primary.dark};
+
+    &:hover {
+      background-color: #ccc;
     }
   }
 `;
 
+const ToggleButton = styled.button`
+  color: ${backgroundColor.primary.light};
+  background: none;
+  border: 1px solid ${backgroundColor.primary.light};
+  font-size: 30px;
+  padding: 3px 5px 1px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+  outline: none;
+  width: 38px;
+  min-width: 38px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const BackScreen = styled.div`
+  background-color: #000;
+  opacity: 0.9;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+`;
+
 export const Navbar = () => {
+  const dispatch = useDispatch();
+  const {
+    currentScreen,
+    data: { detailedGame },
+  } = useSelector((state) => state.main);
+
   const [toggle, setToggle] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const searchInput = useRef();
+
+  useEffect(() => {
+    const handleFocus = () => {
+      setFocused(false);
+    };
+    window.addEventListener("focusout", handleFocus);
+    return () => {
+      window.removeEventListener("focusout", handleFocus);
+    };
+  }, []);
+
+  const handleSearchGame = (e) => {
+    e.preventDefault();
+    dispatch(changeSearchName(searchValue));
+    dispatch(setGoSearch());
+  };
+  const handleSearchClick = (e) => {
+    setFocused(true);
+    setToggle(false);
+  };
+
+  const handleChangeSearchName = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  const handleResetSearching = (e) => {
+    setSearchValue("");
+    dispatch(changeSearchName(""));
+    dispatch(startLoadingGames(1));
+  };
+
+  const handleSaveGame = (e) => {
+    //TODO: Validar campos:
+    dispatch(startSavingGame());
+    dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
+    dispatch(
+      setSelectedOption({ destination: "platforms", option: "Platforms" })
+    );
+  };
+
+  // const handleResetNewGame = () => {
+  //   console.log("clear new game");
+  //   dispatch(unloadDetailedGame());
+  // };
+
+  const handleHideToggle = () => {
+    setToggle(false);
+  };
+
+  const setNextScreen = (value) => {
+    console.log({ value });
+
+    if (value === "home" || value === "games" || value === "create") {
+      dispatch(setCurrentScreen(value));
+    }
+    if (value === "cancel" || value === "save") {
+      dispatch(setCurrentScreen("games"));
+    }
+    if (value === "save") {
+      handleSaveGame();
+    }
+    if (value === "update") {
+      dispatch(setCurrentScreen("update"));
+    }
+    setToggle(false);
+  };
+
   return (
-    <NavContainer>
-      <Link to="/" className="logo">
-        aac-devs
-      </Link>
-      <button
-        aria-label="abrir menu"
-        className="toggle-button"
-        onClick={() => setToggle(!toggle)}
-      >
-        {!toggle ? (
-          <i className="fas fa-bars"></i>
-        ) : (
-          <i className="fas fa-times"></i>
+    <>
+      <Container>
+        {toggle && <BackScreen onClick={handleHideToggle} />}
+        <NavLogo enabled={toggle}>aac-devs</NavLogo>
+
+        {currentScreen === "games" && (
+          <SearchSection focused={focused}>
+            <form onSubmit={handleSearchGame}>
+              <input
+                type="text"
+                autoComplete="off"
+                onClick={handleSearchClick}
+                ref={searchInput}
+                value={searchValue}
+                onChange={handleChangeSearchName}
+              />
+              {searchValue !== "" ? (
+                <i className="fas fa-times" onClick={handleResetSearching}></i>
+              ) : (
+                <i className="fas fa-search" onClick={handleSearchGame}></i>
+              )}
+            </form>
+          </SearchSection>
         )}
-      </button>
-      <ul className={`${toggle ? "nav-menu-visible" : ""}`}>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            home
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            games
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            add new
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            order by
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            data source
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="custom-link nav-link">
-            genre
-          </Link>
-        </li>
-      </ul>
-    </NavContainer>
+        <ToggleButton onClick={() => setToggle(!toggle)}>
+          {!toggle ? (
+            <i className="fas fa-bars"></i>
+          ) : (
+            <i className="fas fa-times"></i>
+          )}
+        </ToggleButton>
+        <NavUl
+          className={`${toggle ? "nav-menu-visible" : "nav-menu-invisible"}`}
+        >
+          {currentScreen !== "home" && (
+            <NavLi onClick={(e) => setNextScreen("home")} to="/">
+              home
+            </NavLi>
+          )}
+          {currentScreen !== "games" && (
+            <NavLi onClick={(e) => setNextScreen("games")} to="/games">
+              games
+            </NavLi>
+          )}
+
+          {currentScreen !== "create" && currentScreen !== "update" && (
+            <NavLi onClick={(e) => setNextScreen("create")} to="/games/create">
+              new
+            </NavLi>
+          )}
+          {currentScreen === "detail-own" && (
+            <NavLi
+              onClick={(e) => setNextScreen("update")}
+              to={`/games/update/${detailedGame?.id}`}
+            >
+              edit
+            </NavLi>
+          )}
+
+          {currentScreen === "games" && toggle && (
+            <>
+              {toggle && <hr />}
+
+              <NavLi onClick={(e) => setNextScreen("order by")} to="/c">
+                order by
+              </NavLi>
+              <NavLi onClick={(e) => setNextScreen("data source")} to="/d">
+                data source
+              </NavLi>
+              <NavLi onClick={(e) => setNextScreen("genre")} to="/e">
+                genre
+              </NavLi>
+            </>
+          )}
+          {(currentScreen === "create" || currentScreen === "update") && (
+            <>
+              {toggle && <hr />}
+
+              <NavLi onClick={(e) => setNextScreen("save")} to="/games">
+                save
+              </NavLi>
+              <NavLi onClick={(e) => setNextScreen("cancel")} to="/games">
+                cancel
+              </NavLi>
+            </>
+          )}
+        </NavUl>
+      </Container>
+    </>
   );
 };
