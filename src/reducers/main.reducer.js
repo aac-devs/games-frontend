@@ -21,30 +21,39 @@ const initialState = {
     total: [],
     active: null,
   },
-  orderBy: "None", // 'none' | 'name' | 'rating'
+  orderBy: "None", // 'none' | 'name' | 'rating' | 'released'
   orderSense: "lower-to-higher", // 'up-to-down' | 'down-to-up'
   filterSource: "All", // 'all' | 'rawg' | 'custom'
   filterGenre: "Genres", // 'none' | 'action' | ... | 'strategy'
-  currentScreen: "",  // 'home' | 'games' | 'detail' | 'create' | 'update'
+  currentScreen: "", // 'home' | 'games' | 'detail' | 'create' | 'update'
 };
 
 export const mainReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.main.loadGenres:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          genres: action.payload,
-        },
-      };
+    // case types.main.loadGenres:
+    //   return {
+    //     ...state,
+    //     data: {
+    //       ...state.data,
+    //       genres: action.payload,
+    //     },
+    //   };
 
-    case types.main.loadPlatforms:
+    // case types.main.loadPlatforms:
+    //   return {
+    //     ...state,
+    //     data: {
+    //       ...state.data,
+    //       platforms: action.payload,
+    //     },
+    //   };
+
+    case types.main.loadPlatformsGenres:
       return {
         ...state,
         data: {
           ...state.data,
-          platforms: action.payload,
+          [action.payload.option]: action.payload.list,
         },
       };
 
@@ -158,60 +167,6 @@ export const mainReducer = (state = initialState, action) => {
       return {
         ...state,
         filterGenre: action.payload,
-      };
-
-    case types.main.setActiveButton:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          active: action.payload,
-        },
-      };
-
-    case types.main.disableNextButton:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          next: false,
-        },
-      };
-
-    case types.main.enableNextButton:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          next: true,
-        },
-      };
-
-    case types.main.disableBackButton:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          back: false,
-        },
-      };
-
-    case types.main.enableBackButton:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          back: true,
-        },
-      };
-
-    case types.main.setTotalButtons:
-      return {
-        ...state,
-        buttons: {
-          ...state.buttons,
-          total: action.payload,
-        },
       };
 
     case types.main.loadRendererGames:

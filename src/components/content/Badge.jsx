@@ -43,7 +43,7 @@ const BadgeButton = styled.button`
   }
 `;
 
-export const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
+const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
   const backColor =
     name === "genres"
       ? backgroundColor.primary.dark
@@ -59,3 +59,5 @@ export const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
     </BadgeContainer>
   );
 };
+
+export default Badge;

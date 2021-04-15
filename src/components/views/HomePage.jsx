@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { setCurrentScreen } from "../../actions/main.actions";
+import { clearArrays, setCurrentScreen } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 
 const Background = styled.div`
@@ -47,10 +48,13 @@ const Title = styled(Link)`
   }
 `;
 
-export const HomePage = () => {
+const HomePage = () => {
   const dispatch = useDispatch();
 
-  console.log('HomePage');
+  useEffect(() => {
+    dispatch(clearArrays());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -67,3 +71,5 @@ export const HomePage = () => {
     </div>
   );
 };
+
+export default HomePage;

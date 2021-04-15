@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
@@ -10,21 +10,16 @@ import {
   changeFilterSource,
   changeOrderBy,
   changeOrderSense,
-  processPaginationOption,
   resetGoSearch,
-  setActiveButton,
-  setCurrentScreen,
   startLoadingGames,
-  startLoadingGenres,
+  startLoadingPlatformsGenres,
+  // startLoadingGenres,
   startModifyingGames,
 } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
-import { Card } from "../content/Card";
-import { Listbox } from "../content/Listbox";
+import { Card, Listbox } from "../index";
 
 const Container = styled.div`
-  /* background-color: ${backgroundColor.primary.dark}; */
-  /* background-color: wheat; */
   width: 100%;
   flex-grow: 1;
   position: relative;
@@ -53,50 +48,28 @@ const ListSection = styled.div`
   height: 100%;
   display: grid;
   gap: 15px;
-  padding: 15px;
+  padding: 0 15px;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  /* grid-template-rows: repeat(auto-fit, minmax(300px, 1fr)); */
   grid-template-rows: auto;
   justify-items: center;
-`;
-
-const PagBtnsGroup = styled.div`
-  background-color: ${backgroundColor.primary.normal};
-  width: 100%;
-  display: flex;
-  text-align: center;
-  height: 100%;
-  align-items: center;
-  padding: 3px 0;
-  border-radius: 10px;
-  div {
-    &:nth-child(1) {
-      width: 20%;
-    }
-    &:nth-child(2) {
-      flex-grow: 1;
-      visibility: visible;
-      @media (max-width: 568px) {
-        visibility: hidden;
-        width: 0;
-        height: 0;
-      }
-    }
-    &:nth-child(3) {
-      width: 20%;
-    }
+  padding-top: 55px;
+  padding-bottom: 15px;
+  @media (max-width: 768px) {
+    padding-top: 15px;
   }
 `;
 
 const PagSection = styled.div`
-  position: sticky;
-  padding: 10px 15px 0;
-  top: 0;
+  position: fixed;
+  top: 90px;
   z-index: 10;
+  @media (max-width: 768px) {
+    padding-bottom: 15px;
+    visibility: hidden;
+  }
 `;
 
 const PagActionsGroup = styled.div`
-  margin-top: 10px;
   display: flex;
   justify-content: flex-start;
 `;
@@ -105,25 +78,6 @@ const PagActionsSection = styled.div`
   position: relative;
   margin-right: 15px;
   display: flex;
-`;
-
-const PagBtn = styled.button`
-  color: ${textColor.primary.light};
-  background-color: transparent;
-  border: none;
-  margin: 0 6px;
-  padding: 0 2px;
-  cursor: pointer;
-  outline: none;
-  font-size: 18px;
-  transition: all 0.3s;
-  :hover {
-    color: dodgerblue;
-  }
-  :disabled {
-    color: ${textColor.primary.dark};
-    cursor: default;
-  }
 `;
 
 const PagActionBtn = styled.button`
@@ -169,23 +123,40 @@ const PagUpDownBtn = styled.button`
   }
 `;
 
-export const MainPage = ({ history }) => {
+const MainPage = () => {
   const dispatch = useDispatch();
   const main = useSelector((state) => state.main);
   const { listbox } = useSelector((state) => state.components);
 
-  console.log('MainPage');
-
-  // useEffect(() => {
-  //   dispatch(setCurrentScreen("games"));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  const observer = useRef(
+    new IntersectionObserver(
+      (entries) => {
+        const last = entries[entries.length - 1];
+        if (last.isIntersecting) {
+          dispatch(startLoadingGames(main.nextPage));
+        }
+      },
+      { threshold: 1 }
+    )
+  );
+  const [element, setElement] = useState(null);
 
   useEffect(() => {
-    if (main.data.games.original.length === 0) {
-      dispatch(startLoadingGenres());
-      dispatch(startLoadingGames(1));
+    const currentElement = element;
+    const currentObserver = observer.current;
+    if (currentElement) {
+      currentObserver.observe(currentElement);
     }
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement);
+      }
+    };
+  }, [element, main.orderBy]);
+
+  useEffect(() => {
+    dispatch(startLoadingPlatformsGenres("genres"));
+    dispatch(startLoadingGames(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -221,7 +192,7 @@ export const MainPage = ({ history }) => {
 
   useEffect(() => {
     dispatch(startModifyingGames());
-    dispatch(setActiveButton(1));
+    // dispatch(setActiveButton(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [main.orderBy, main.orderSense, main.filterSource, main.filterGenre]);
 
@@ -236,74 +207,12 @@ export const MainPage = ({ history }) => {
       : dispatch(changeOrderSense("lower-to-higher"));
   };
 
-  const handleClickNextButton = () => {
-    main.nextPage
-      ? main.buttons.active + 1 === main.nextPage
-        ? dispatch(startLoadingGames(main.nextPage))
-        : dispatch(setActiveButton(main.buttons.active + 1))
-      : dispatch(setActiveButton(main.buttons.active + 1));
-    dispatch(processPaginationOption());
-  };
-
-  const handleClickBackButton = () => {
-    main.buttons.active !== 1
-      ? dispatch(setActiveButton(main.buttons.active - 1))
-      : dispatch(processPaginationOption());
-  };
-
-  const handlePaginationButtons = (e) => {
-    dispatch(setActiveButton(parseInt(e.target.value)));
-    dispatch(processPaginationOption());
-  };
-
-  // const handleSelectGame = (id) => {
-  //   history.push(`/games/detail/${id}`);
-  // };
   return (
     <Container>
       <MainSection>
-        {/* <PagSection> */}
-        {/* <PagBtnsGroup>
-            <div>
-              <PagBtn
-                onClick={handleClickBackButton}
-                disabled={!main.buttons.back}
-              >
-                back
-              </PagBtn>
-            </div>
-            <div>
-              {main.buttons.total.length > 0 &&
-                main.buttons.total.map((item) => (
-                  <PagBtn
-                    key={`buttons:${item}`}
-                    onClick={handlePaginationButtons}
-                    value={item}
-                    disabled={item === main.buttons.active ? true : false}
-                    style={{
-                      color: `${
-                        item === main.buttons.active
-                          ? "dodgerblue"
-                          : `${textColor.primary.light}`
-                      }`,
-                    }}
-                  >
-                    {item}
-                  </PagBtn>
-                ))}
-            </div>
-            <div>
-              <PagBtn
-                onClick={handleClickNextButton}
-                disabled={!main.buttons.next}
-              >
-                next
-              </PagBtn>
-            </div>
-          </PagBtnsGroup> */}
-
-        {/* <PagActionsGroup> */}
-        {/* <PagActionsSection>
+        <PagSection>
+          <PagActionsGroup>
+            <PagActionsSection>
               <>
                 <PagActionBtn
                   theme="primary"
@@ -336,9 +245,9 @@ export const MainPage = ({ history }) => {
                   ></i>
                 </PagUpDownBtn>
               </>
-            </PagActionsSection> */}
+            </PagActionsSection>
 
-        {/* <PagActionsSection>
+            <PagActionsSection>
               <PagActionBtn
                 theme={
                   listbox.source.selected === "All" ? "primary" : "secondary"
@@ -352,9 +261,9 @@ export const MainPage = ({ history }) => {
               {listbox.source.visible && (
                 <Listbox listName="source" left={0} right="auto" />
               )}
-            </PagActionsSection> */}
+            </PagActionsSection>
 
-        {/* <PagActionsSection>
+            <PagActionsSection>
               <PagActionBtn
                 theme={
                   listbox.genres.selected === "Genres" ? "primary" : "secondary"
@@ -368,25 +277,32 @@ export const MainPage = ({ history }) => {
               {listbox.genres.visible && (
                 <Listbox listName="genres" left="0" right="auto" />
               )}
-            </PagActionsSection> */}
-        {/* </PagActionsGroup> */}
-        {/* </PagSection> */}
+            </PagActionsSection>
+          </PagActionsGroup>
+        </PagSection>
 
         <ListSection>
           {main.data.games.render.length > 0 &&
             main.data.games.render.map((game, index) =>
-              index >= (main.buttons.active - 1) * 10 &&
-              index <= main.buttons.active * 10 - 1 ? (
+              main.data.games.render.length >= 10 ? (
                 <Card
+                  setElement={
+                    main.data.games.render.length - 1 === index
+                      ? setElement
+                      : null
+                  }
                   key={game.id}
                   enableDelete={false}
-                  // handleSelectGame={handleSelectGame}
                   {...game}
                 />
-              ) : null
+              ) : (
+                <Card key={game.id} enableDelete={false} {...game} />
+              )
             )}
         </ListSection>
       </MainSection>
     </Container>
   );
 };
+
+export default MainPage;

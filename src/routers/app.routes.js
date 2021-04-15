@@ -1,17 +1,20 @@
 import { Route, Switch, HashRouter as Router } from "react-router-dom";
 import styled from "styled-components";
-import { Navbar } from "../components/content/Navbar";
-import { DetailPage } from "../components/views/DetailPage";
-import { HomePage } from "../components/views/HomePage";
-import { MainPage } from "../components/views/MainPage";
-import { CrudPage } from "../components/views/CrudPage";
-import { backgroundColor, textColor } from "../global-styles";
+import { backgroundColor } from "../global-styles";
+import { useSelector } from "react-redux";
+import {
+  DetailPage,
+  HomePage,
+  MainPage,
+  CrudPage,
+  Navbar,
+  Loading,
+} from "../components";
 
 const AppRouterContainer = styled.div`
   display: grid;
   grid-template-rows: 1fr 60px;
   height: 100%;
-
   .header {
     position: fixed;
     top: 0;
@@ -20,32 +23,28 @@ const AppRouterContainer = styled.div`
     opacity: 0.9;
     z-index: 10;
   }
-
   .main {
     height: 100%;
     padding-top: 80px;
-    /* background-color: ${backgroundColor.primary.dark}; */
     @media (max-width: 768px) {
       padding-top: 60px;
     }
   }
-
   .footer {
     background-color: ${backgroundColor.primary.normal};
     opacity: 0.5;
-
-    /* background-color: yellow; */
-    /* border-top: 1px solid ${textColor.secondary.normal}; */
   }
 `;
 
 export const AppRouter = () => {
+  const { loading } = useSelector((state) => state.ui);
   return (
     <AppRouterContainer>
       <Router>
         <header className="header">
           <Navbar />
         </header>
+        <Loading animation={loading} />
         <main className="main">
           <Switch>
             <Route exact path="/" component={HomePage} />

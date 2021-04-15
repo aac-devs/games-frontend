@@ -84,7 +84,7 @@ const CustomSelect = styled.select`
   }
 `;
 
-export const Date = ({
+const DateBox = ({
   show,
   handleSelectedDateClose,
   currentDate,
@@ -142,3 +142,5 @@ export const Date = ({
     </>
   );
 };
+
+export default DateBox;

@@ -62,7 +62,7 @@ for (let i = 0; i < 20; i++) {
   dot.push(i);
 }
 
-export const Loading = ({ animation }) => {
+const Loading = ({ animation }) => {
   const state = animation ? "running" : "paused";
   const visible = animation ? "visible" : "hidden";
   const z = animation ? "100" : "-1";
@@ -80,3 +80,5 @@ export const Loading = ({ animation }) => {
     </Container>
   );
 };
+
+export default Loading;

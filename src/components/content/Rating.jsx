@@ -69,7 +69,7 @@ const Body = styled.div`
   }
 `;
 
-export const Rating = ({
+const Rating = ({
   currentRating,
   show,
   handleChangeRating,
@@ -101,3 +101,5 @@ export const Rating = ({
     </>
   );
 };
+
+export default Rating;

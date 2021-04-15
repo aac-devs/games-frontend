@@ -5,15 +5,14 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 
 import { backgroundColor, textColor } from "../../global-styles";
-import { Badge } from "../content/Badge";
-import { Rating } from "../content/Rating";
 import {
   changeInputValue,
-  setCurrentScreen,
+  clearArrays,
   setTemporaryImage,
   startLoadingDetailedGame,
-  startLoadingGenres,
-  startLoadingPlatforms,
+  startLoadingPlatformsGenres,
+  // startLoadingGenres,
+  // startLoadingPlatforms,
   startSettingEditGame,
 } from "../../actions/main.actions";
 import {
@@ -25,29 +24,20 @@ import {
   startLoadingListboxGenres,
   startLoadingListboxPlatforms,
 } from "../../actions/components.actions";
-import { Listbox } from "../content/Listbox";
-import { Date } from "../content/Date";
+import { Badge, Rating, Listbox, DateBox } from "../index";
 
 const Container = styled.div`
   margin: 0 auto;
-  /* background-color: lime; */
   max-width: 768px;
 `;
 
 const Grid = styled.div`
-  /* background-color: ${backgroundColor.primary.dark}; */
-  /* background-color: dodgerblue; */
-  /* max-width: 768px; */
   min-width: 300px;
-  /* width: 768px; */
-  /* height: 100%; */
   padding: 10px;
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  /* grid-template-rows: max-content; */
   justify-items: center;
-  /* grid-template-rows: auto; */
 `;
 
 const ImageSection = styled.div`
@@ -69,11 +59,8 @@ const ImageSection = styled.div`
   min-width: 300px;
   max-width: 400px;
   width: 100%;
-
   min-height: 280px;
   height: 280px;
-  /* justify-self: center; */
-  /* width: 400px; */
   .edit {
     opacity: 0.4;
   }
@@ -185,11 +172,8 @@ const RatingBody = styled(ReleasedBody)`
 const GenresPlatFormsSection = styled.div`
   display: flex;
   flex-direction: column;
-  /* background-color: yellow; */
-  /* border: 1px solid #fff; */
   align-self: start;
   padding: 10px 10px 3px 10px;
-  /* min-width: 267px; */
   min-width: 300px;
   max-width: 400px;
   width: 100%;
@@ -235,21 +219,9 @@ const PagActionBtn = styled.button`
   }
 `;
 
-export const CrudPage = () => {
+const CrudPage = () => {
   const dispatch = useDispatch();
   let params = useParams();
-
-  console.log("CrudPage");
-
-  // useEffect(() => {
-  //   // console.log("primer useEffect", params.id);
-  //   if (!params.id) {
-  //     dispatch(setCurrentScreen("create"));
-  //   } else {
-  //     dispatch(setCurrentScreen("update"));
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   const main = useSelector((state) => state.main);
   const { listbox, ratingPicker, datePicker } = useSelector(
@@ -262,11 +234,14 @@ export const CrudPage = () => {
   const inputFile = useRef(null);
 
   useEffect(() => {
+    dispatch(clearArrays());
     if (main.data.genres.length === 0) {
-      dispatch(startLoadingGenres());
+      // dispatch(startLoadingGenres());
+      dispatch(startLoadingPlatformsGenres("genres"));
     }
     if (main.data.platforms.length === 0) {
-      dispatch(startLoadingPlatforms());
+      // dispatch(startLoadingPlatforms());
+      dispatch(startLoadingPlatformsGenres("platforms"));
     }
     if (currentScreen === "create") {
       dispatch(startSettingEditGame("new"));
@@ -277,19 +252,6 @@ export const CrudPage = () => {
       dispatch(startLoadingDetailedGame(params.id));
       dispatch(startSettingEditGame());
     }
-    // console.log("Dentro de crud page");
-    // console.log({ currentScreen });
-
-    // if (!main.data.detailedGame) {
-    //   if (params.id === undefined) {
-    //     dispatch(startSettingEditGame("new"));
-    //   } else {
-    //     dispatch(startLoadingDetailedGame(params.id));
-    //     dispatch(startSettingEditGame());
-    //   }
-    // } else {
-    //   dispatch(startSettingEditGame());
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -421,7 +383,7 @@ export const CrudPage = () => {
             />
           </DataDescription>
           <DataFooter>
-            <Date
+            <DateBox
               handleSelectedDate={handleSelectedDate}
               show={datePicker.show}
               handleSelectedDateClose={() => dispatch(hideDatePicker())}
@@ -525,3 +487,5 @@ export const CrudPage = () => {
     </Container>
   );
 };
+
+export default CrudPage;

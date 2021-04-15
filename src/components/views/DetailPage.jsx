@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import dayjs from "dayjs";
 import {
-  setCurrentScreen,
+  clearArrays,
   startLoadingDetailedGame,
 } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
@@ -14,12 +14,10 @@ const Container = styled.div`
   flex-direction: column;
   min-width: 267px;
   max-width: 768px;
-  /* height: 90vh; */
   height: 100%;
   margin: 0 auto;
   z-index: 1;
   padding: 15px;
-  /* z-index: 10; */
 `;
 
 const Image = styled.div`
@@ -37,7 +35,6 @@ const Image = styled.div`
   top: 0;
   left: 0;
   border: none;
-  /* z-index: -1; */
 `;
 
 const Header = styled.div`
@@ -89,7 +86,6 @@ const Title = styled.div`
 
 const About = styled.div`
   z-index: 1;
-  /* z-index: 10; */
   font-size: 20px;
   color: #fff;
   margin: 0 10px 5px 10px;
@@ -103,7 +99,6 @@ const Description = styled.div`
   padding: 3px 8px 0 5px;
   overflow-y: auto;
   z-index: 1;
-  /* z-index: 10; */
   margin: 0 5px;
   border: 1px solid ${textColor.primary.dark};
   border-radius: 10px;
@@ -127,7 +122,6 @@ const Description = styled.div`
 const Footer = styled.div`
   margin-top: 15px;
   z-index: 1;
-  /* z-index: 10; */
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -166,20 +160,17 @@ const GenPlatBody = styled.div`
   }
 `;
 
-export const DetailPage = ({ history }) => {
+const DetailPage = ({ history }) => {
   let params = useParams();
   const dispatch = useDispatch();
   const {
     data: { detailedGame },
   } = useSelector((state) => state.main);
 
-  console.log('DetailPage');
-
-
-  // useEffect(() => {
-  //   dispatch(setCurrentScreen("detail"));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  useEffect(() => {
+    dispatch(clearArrays());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     dispatch(startLoadingDetailedGame(params.id));
@@ -246,3 +237,5 @@ export const DetailPage = ({ history }) => {
     </Container>
   );
 };
+
+export default DetailPage;

@@ -8,12 +8,12 @@ Tamaños:
 */
 
 import dayjs from "dayjs";
+import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {
   setCurrentScreen,
-  startDeletingGame,
   unloadDetailedGame,
 } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
@@ -30,7 +30,7 @@ const Container = styled.div`
   position: relative;
   transition: all 0.4s;
   &:hover {
-    transform: scale(1.01);
+    transform: scale(1.02);
   }
   display: grid;
   grid-template-columns: 70% 30%;
@@ -44,17 +44,32 @@ const Container = styled.div`
 
 const ImageSection = styled.div`
   grid-area: img;
-  /* background-color: cyan; */
+  background-color: cyan;
   min-width: 40%;
   min-height: 40%;
 
   width: 100%;
   height: 100%;
-  background-image: url(${(props) => props.image});
+  /* background-image: url(${(props) => props.image});
   background-size: cover;
   background-position: top;
   background-repeat: no-repeat;
-  filter: brightness(90%);
+  filter: brightness(90%); */
+  background-color: ${backgroundColor.primary.dark};
+  /* background-color: transparent; */
+  overflow: hidden;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 2px solid ${backgroundColor.primary.light};
+  border-bottom: 2px solid ${backgroundColor.primary.light};
+  img {
+    /* max-width: 100%; */
+    max-height: 100%;
+    filter: brightness(70%);
+    box-shadow: 0px 0px 10px rgba(250, 250, 250, 0.5);
+  }
 `;
 
 const Title = styled.div`
@@ -171,67 +186,67 @@ const Hr = styled.hr`
   background-color: ${textColor.primary.dark};
 `;
 
-export const Card = ({
-  id,
-  image,
-  name,
-  released,
-  rating,
-  genres,
-  enableDelete,
-}) => {
-  const dispatch = useDispatch();
+const Card = memo(
+  ({ id, image, name, released, rating, genres, setElement, enableDelete }) => {
+    const dispatch = useDispatch();
+    // const handleDeleteGame = (e) => {
+    //   e.stopPropagation();
+    //   dispatch(startDeletingGame(id));
+    // };
+    const ratingColor =
+      rating >= 4.5
+        ? "linear-gradient(180deg, #b4ec51, #429321)"
+        : rating >= 3
+        ? "linear-gradient(180deg, #649bff, #4354b9)"
+        : "linear-gradient(180deg, #ff5764, #f11a2a)";
 
-  // const handleDeleteGame = (e) => {
-  //   e.stopPropagation();
-  //   dispatch(startDeletingGame(id));
-  // };
-  const ratingColor =
-    rating >= 4.5
-      ? "linear-gradient(180deg, #b4ec51, #429321)"
-      : rating >= 3
-      ? "linear-gradient(180deg, #649bff, #4354b9)"
-      : "linear-gradient(180deg, #ff5764, #f11a2a)";
+    const handleClearDetailedGame = () => {
+      console.log("clear detailed");
+      if (id.toString().startsWith("own")) {
+        dispatch(setCurrentScreen("detail-own"));
+      } else {
+        dispatch(setCurrentScreen("detail"));
+      }
 
-  const handleClearDetailedGame = () => {
-    console.log("clear detailed");
-    if (id.toString().startsWith("own")) {
-      dispatch(setCurrentScreen("detail-own"));
-    } else {
-      dispatch(setCurrentScreen("detail"));
-    }
+      dispatch(unloadDetailedGame());
+    };
 
-    dispatch(unloadDetailedGame());
-  };
+    return (
+      <Container ref={setElement}>
+        <ImageSection
+        // image={image !== "" ? image : "/no-image.jpg"}
+        >
+          <img src={image} alt="ima" />
+        </ImageSection>
+        <Title>
+          <SpanLink
+            onClick={handleClearDetailedGame}
+            to={`/games/detail/${id}`}
+          >
+            {name}
+          </SpanLink>
+        </Title>
+        <Released>
+          <h5>Released</h5>
+          <span>{dayjs(released).format("MMMM D, YYYY")}</span>
+        </Released>
+        <Genres>
+          <Hr />
 
-  return (
-    <Container>
-      <ImageSection
-        image={image !== "" ? image : "/no-image.jpg"}
-      ></ImageSection>
-      <Title>
-        <SpanLink onClick={handleClearDetailedGame} to={`/games/detail/${id}`}>
-          {name}
-        </SpanLink>
-      </Title>
-      <Released>
-        <h5>Released</h5>
-        <span>{dayjs(released).format("MMMM D, YYYY")}</span>
-      </Released>
-      <Genres>
-        <Hr />
+          <h5>Genres</h5>
+          <GenresTags>
+            {genres.map((genre) => (
+              <span key={genre.id}>{genre.name}</span>
+            ))}
+          </GenresTags>
+        </Genres>
+        <Rating ratingColor={ratingColor}>
+          <h5>Rating</h5>
+          <span>{rating}</span>
+        </Rating>
+      </Container>
+    );
+  }
+);
 
-        <h5>Genres</h5>
-        <GenresTags>
-          {genres.map((genre) => (
-            <span key={genre.id}>{genre.name}</span>
-          ))}
-        </GenresTags>
-      </Genres>
-      <Rating ratingColor={ratingColor}>
-        <h5>Rating</h5>
-        <span>{rating}</span>
-      </Rating>
-    </Container>
-  );
-};
+export default Card;

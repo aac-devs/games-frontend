@@ -18,7 +18,7 @@ const initialState = {
       visible: false,
     },
     sorted: {
-      list: ["None", "Name", "Rating"],
+      list: ["None", "Name", "Rating", "Released"],
       selected: "None",
       visible: false,
     },

@@ -2,23 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { setSelectedOption } from "../../actions/components.actions";
+import {
+  setSelectedOption,
+  showListbox,
+} from "../../actions/components.actions";
 import {
   changeSearchName,
   setCurrentScreen,
   setGoSearch,
   startLoadingGames,
   startSavingGame,
-  unloadDetailedGame,
 } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
+import { Listbox } from "../index";
 
 const SearchSection = styled.div`
   visibility: ${(props) => props.visible};
   background-color: ${(props) =>
     props.focused ? "#fff" : `${backgroundColor.primary.light}`};
   margin: 0 10px;
-  /* width: 100px; */
   max-width: 500px;
 
   flex-grow: 1;
@@ -56,9 +58,6 @@ const SearchSection = styled.div`
   &:focus {
     background-color: #fff;
   }
-  @media (max-width: 768px) {
-    /* margin-right: 100px; */
-  }
 `;
 
 const Container = styled.nav`
@@ -71,7 +70,6 @@ const Container = styled.nav`
   z-index: 10;
   position: relative;
   box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9);
-
   @media (max-width: 768px) {
     height: 60px;
   }
@@ -89,7 +87,6 @@ const NavLogo = styled.div`
   padding: 0;
   font-size: 30px;
   font-family: "Poppins", sans-serif;
-  /* background-color: pink; */
   width: 150px;
   min-width: 150px;
   text-align: center;
@@ -104,15 +101,12 @@ const NavUl = styled.ul`
   display: flex;
   position: relative;
   align-items: center;
-  /* background-color: lime; */
   overflow-y: visible;
 
   @media (max-width: 768px) {
     position: fixed;
     top: 60px;
-    /* background-color: ${textColor.secondary.dark}; */
     background-color: #fff;
-    /* height: calc(100% - 60px); */
     height: max-content;
     width: 250px;
     flex-direction: column;
@@ -122,12 +116,10 @@ const NavUl = styled.ul`
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     transition: right 0.3s;
-    /* z-index: 1000; */
   }
 `;
 
 const NavLi = styled(CustomLink)`
-  /* background-color: gray; */
   list-style: none;
   margin-left: 20px;
   text-transform: uppercase;
@@ -138,11 +130,9 @@ const NavLi = styled(CustomLink)`
   padding: 3px 8px 0 8px;
   color: ${textColor.primary.dark};
   transition: background-color 0.3s;
-
   &:hover {
     background-color: ${backgroundColor.primary.light};
   }
-
   @media (max-width: 768px) {
     width: 100%;
     margin-left: 0;
@@ -153,7 +143,36 @@ const NavLi = styled(CustomLink)`
     padding-top: 8px;
     transition: background-color 0.3s;
     color: ${backgroundColor.primary.dark};
+    &:hover {
+      background-color: #ccc;
+    }
+  }
+`;
 
+const MenuItem = styled.div`
+  list-style: none;
+  margin-left: 20px;
+  text-transform: uppercase;
+  width: max-content;
+  text-align: center;
+  font-size: 18px;
+  border-radius: 5px;
+  padding: 3px 8px 0 8px;
+  color: ${textColor.primary.dark};
+  transition: background-color 0.3s;
+  &:hover {
+    background-color: ${backgroundColor.primary.light};
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 10px;
+    height: 40px;
+    font-size: 24px;
+    border-radius: 15px;
+    padding-top: 8px;
+    transition: background-color 0.3s;
+    color: ${backgroundColor.primary.dark};
     &:hover {
       background-color: #ccc;
     }
@@ -189,12 +208,13 @@ const BackScreen = styled.div`
   z-index: -1;
 `;
 
-export const Navbar = () => {
+const Navbar = () => {
   const dispatch = useDispatch();
   const {
     currentScreen,
     data: { detailedGame },
   } = useSelector((state) => state.main);
+  const { listbox } = useSelector((state) => state.components);
 
   const [toggle, setToggle] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -241,30 +261,22 @@ export const Navbar = () => {
     );
   };
 
-  // const handleResetNewGame = () => {
-  //   console.log("clear new game");
-  //   dispatch(unloadDetailedGame());
-  // };
-
   const handleHideToggle = () => {
     setToggle(false);
   };
 
   const setNextScreen = (value) => {
-    console.log({ value });
-
-    if (value === "home" || value === "games" || value === "create") {
+    (value === "home" || value === "games" || value === "create") &&
       dispatch(setCurrentScreen(value));
-    }
-    if (value === "cancel" || value === "save") {
+    (value === "cancel" || value === "save") &&
       dispatch(setCurrentScreen("games"));
-    }
-    if (value === "save") {
-      handleSaveGame();
-    }
-    if (value === "update") {
-      dispatch(setCurrentScreen("update"));
-    }
+    value === "save" && handleSaveGame();
+    value === "update" && dispatch(setCurrentScreen("update"));
+    setToggle(false);
+  };
+
+  const handleOrderFilter = (value) => {
+    dispatch(showListbox(value));
     setToggle(false);
   };
 
@@ -331,16 +343,15 @@ export const Navbar = () => {
           {currentScreen === "games" && toggle && (
             <>
               {toggle && <hr />}
-
-              <NavLi onClick={(e) => setNextScreen("order by")} to="/c">
+              <MenuItem onClick={(e) => handleOrderFilter("sorted")}>
                 order by
-              </NavLi>
-              <NavLi onClick={(e) => setNextScreen("data source")} to="/d">
+              </MenuItem>
+              <MenuItem onClick={(e) => handleOrderFilter("source")}>
                 data source
-              </NavLi>
-              <NavLi onClick={(e) => setNextScreen("genre")} to="/e">
+              </MenuItem>
+              <MenuItem onClick={(e) => handleOrderFilter("genres")}>
                 genre
-              </NavLi>
+              </MenuItem>
             </>
           )}
           {(currentScreen === "create" || currentScreen === "update") && (
@@ -355,8 +366,20 @@ export const Navbar = () => {
               </NavLi>
             </>
           )}
+
+          {listbox.sorted.visible && (
+            <Listbox listName="sorted" left={0} right="auto" />
+          )}
+          {listbox.source.visible && (
+            <Listbox listName="source" left={0} right="auto" />
+          )}
+          {listbox.genres.visible && (
+            <Listbox listName="genres" left={0} right="auto" />
+          )}
         </NavUl>
       </Container>
     </>
   );
 };
+
+export default Navbar;

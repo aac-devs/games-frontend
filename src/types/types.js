@@ -1,7 +1,8 @@
 export const types = {
   main: {
-    loadGenres: "[MAIN] Load genres",
-    loadPlatforms: "[MAIN] Load platforms",
+    // loadGenres: "[MAIN] Load genres",
+    // loadPlatforms: "[MAIN] Load platforms",
+    loadPlatformsGenres: "[MAIN] Load platforms genres",
     loadGames: "[MAIN] Load games",
     setEditGame: "[MAIN] Set edit game",
     clearArrays: "[MAIN] Clear arrays",
@@ -10,12 +11,6 @@ export const types = {
     changeOrderBy: "[MAIN] Change order by",
     changeFilterSource: "[MAIN] Change filter source",
     changeFilterGenre: "[MAIN] Change filter genre",
-    setActiveButton: "[MAIN] Set active button",
-    enableNextButton: "[MAIN] Enable next button",
-    disableNextButton: "[MAIN] Disable next button",
-    enableBackButton: "[MAIN] Enable back button",
-    disableBackButton: "[MAIN] Disable back button",
-    setTotalButtons: "[MAIN] Set total buttons",
     loadRendererGames: "[MAIN] Load renderer games",
     setDetailedGame: "[MAIN] Set detailed game",
     resetDetailedGame: "[MAIN] Reset detailed game",

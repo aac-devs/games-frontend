@@ -7,9 +7,9 @@ import {
 
 const BackgroudMenu = styled.div`
   visibility: ${(props) => (props.show ? "visible" : "hidden")};
-  background-color: black;
-  filter: brightness(50%);
-  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.8);
+  /* filter: brightness(50%); */
+  /* opacity: 0.8; */
   position: fixed;
   top: 0;
   left: 0;
@@ -64,7 +64,7 @@ const Container = styled.div`
 `;
 
 // TODO: cargar videogames.search.filtering con el valor cambiado.
-export const Listbox = ({
+const Listbox = ({
   listName,
   width = "220px",
   left,
@@ -86,24 +86,27 @@ export const Listbox = ({
   };
   return (
     <>
-      <Container width={width} left={left} right={right} top={top}>
-        <ul>
-          {listbox[listName].list.map((item) =>
-            !exclude.includes(item) ? (
-              <li key={item} onClick={handleOptionChange} id={item}>
-                {item}&nbsp;
-                {listbox[listName].selected === item && (
-                  <i className="fas fa-check"></i>
-                )}
-              </li>
-            ) : null
-          )}
-        </ul>
-      </Container>
       <BackgroudMenu
         show={listbox[listName].visible}
         onClick={handleBackground}
-      ></BackgroudMenu>
+      >
+        <Container width={width} left={left} right={right} top={top}>
+          <ul>
+            {listbox[listName].list.map((item) =>
+              !exclude.includes(item) ? (
+                <li key={item} onClick={handleOptionChange} id={item}>
+                  {item}&nbsp;
+                  {listbox[listName].selected === item && (
+                    <i className="fas fa-check"></i>
+                  )}
+                </li>
+              ) : null
+            )}
+          </ul>
+        </Container>
+      </BackgroudMenu>
     </>
   );
 };
+
+export default Listbox;

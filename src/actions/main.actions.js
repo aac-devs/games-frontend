@@ -10,14 +10,46 @@ import {
   startLoading,
 } from "./ui.actions";
 
-export const startLoadingGenres = () => {
+// export const startLoadingGenres = () => {
+//   return async (dispatch) => {
+//     try {
+//       dispatch(removeError());
+//       dispatch(startLoading());
+//       const resp = await fetchingData(`games/genres`);
+//       const { ok, results: list, message } = await resp.json();
+//       ok ? dispatch(loadGenres(list)) : dispatch(setError(message));
+//       dispatch(finishLoading());
+//     } catch (error) {
+//       console.error(`Something went wrong fetching data!`);
+//     }
+//   };
+// };
+
+// export const startLoadingPlatforms = () => {
+//   return async (dispatch) => {
+//     try {
+//       dispatch(removeError());
+//       dispatch(startLoading());
+//       const resp = await fetchingData(`games/platforms`);
+//       const { ok, results: list, message } = await resp.json();
+//       ok ? dispatch(loadPlatforms(list)) : dispatch(setError(message));
+//       dispatch(finishLoading());
+//     } catch (error) {
+//       console.error(`Something went wrong fetching data!`);
+//     }
+//   };
+// };
+
+export const startLoadingPlatformsGenres = (option) => {
   return async (dispatch) => {
     try {
       dispatch(removeError());
       dispatch(startLoading());
-      const resp = await fetchingData(`games/genres`);
+      const resp = await fetchingData(`games/${option}`);
       const { ok, results: list, message } = await resp.json();
-      ok ? dispatch(loadGenres(list)) : dispatch(setError(message));
+      ok
+        ? dispatch(loadPlatformsGenres({ option, list }))
+        : dispatch(setError(message));
       dispatch(finishLoading());
     } catch (error) {
       console.error(`Something went wrong fetching data!`);
@@ -25,20 +57,10 @@ export const startLoadingGenres = () => {
   };
 };
 
-export const startLoadingPlatforms = () => {
-  return async (dispatch) => {
-    try {
-      dispatch(removeError());
-      dispatch(startLoading());
-      const resp = await fetchingData(`games/platforms`);
-      const { ok, results: list, message } = await resp.json();
-      ok ? dispatch(loadPlatforms(list)) : dispatch(setError(message));
-      dispatch(finishLoading());
-    } catch (error) {
-      console.error(`Something went wrong fetching data!`);
-    }
-  };
-};
+const loadPlatformsGenres = (payload) => ({
+  type: types.main.loadPlatformsGenres,
+  payload,
+});
 
 export const startSettingEditGame = (edit = "") => {
   return (dispatch, getState) => {
@@ -93,11 +115,9 @@ export const startLoadingGames = (page = 1) => {
       }
       if (ok) {
         dispatch(loadGames({ data, nextPage: parseInt(nextPage) }));
-        dispatch(setActiveButton(page));
       } else {
         dispatch(setError(msg));
       }
-      !nextPage && dispatch(disableNextButton());
       dispatch(finishLoading());
     } catch (error) {
       console.error(`Something went wrong fetching data!`);
@@ -130,17 +150,49 @@ export const startModifyingGames = () => {
     }
     if (orderBy !== "None") {
       array.sort(function (a, b) {
-        return orderBy === "Name"
-          ? a.name.toLowerCase() < b.name.toLowerCase()
-            ? -1
-            : a.name.toLowerCase() < b.name.toLowerCase()
-            ? 1
-            : 0
-          : a.rating < b.rating
-          ? -1
-          : a.rating < b.rating
-          ? 1
-          : 0;
+        if (orderBy === "Name") {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          } else if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (orderBy === "Rating") {
+          if (a.rating < b.rating) {
+            return -1;
+          } else if (a.rating > b.rating) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else {
+          if (a.released < b.released) {
+            return -1;
+          } else if (a.released > b.released) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+
+        // return orderBy === "Name"
+        //   ? a.name.toLowerCase() < b.name.toLowerCase()
+        //     ? -1
+        //     : a.name.toLowerCase() > b.name.toLowerCase()
+        //     ? 1
+        //     : 0
+        //   : orderBy === 'Rating'
+        //   ? a.rating < b.rating
+        //   ? -1
+        //   : a.rating < b.rating
+        //   ? 1
+        //   : 0
+        //   : a.released < b.released
+        //   ?-1
+        //   : a.released > b.released
+        //   ? 1
+        //   : 0
       });
     }
     orderSense === "higher-to-lower" && array.reverse();
@@ -150,26 +202,7 @@ export const startModifyingGames = () => {
         totalArray.push(i + 1);
       }
     }
-    dispatch(setTotalButtons(totalArray));
     dispatch(loadRendererGames(array));
-    dispatch(processPaginationOption());
-  };
-};
-
-export const processPaginationOption = () => {
-  return (dispatch, getState) => {
-    const {
-      nextPage,
-      buttons: { total, active },
-    } = getState().main;
-    active === total.length && !nextPage
-      ? dispatch(disableNextButton())
-      : dispatch(enableNextButton());
-    active === 1 ? dispatch(disableBackButton()) : dispatch(enableBackButton());
-    if (!total || total.length === 0) {
-      dispatch(disableBackButton());
-      dispatch(disableNextButton());
-    }
   };
 };
 
@@ -234,15 +267,15 @@ const setEditGame = (payload) => ({
   payload,
 });
 
-const loadPlatforms = (payload) => ({
-  type: types.main.loadPlatforms,
-  payload,
-});
+// const loadPlatforms = (payload) => ({
+//   type: types.main.loadPlatforms,
+//   payload,
+// });
 
-const loadGenres = (payload) => ({
-  type: types.main.loadGenres,
-  payload,
-});
+// const loadGenres = (payload) => ({
+//   type: types.main.loadGenres,
+//   payload,
+// });
 
 const loadGames = (payload) => ({
   type: types.main.loadGames,
@@ -265,32 +298,6 @@ export const changeFilterSource = (payload) => ({
 });
 export const changeFilterGenre = (payload) => ({
   type: types.main.changeFilterGenre,
-  payload,
-});
-
-export const setActiveButton = (payload) => ({
-  type: types.main.setActiveButton,
-  payload,
-});
-
-export const disableNextButton = () => ({
-  type: types.main.disableNextButton,
-});
-
-export const enableNextButton = () => ({
-  type: types.main.enableNextButton,
-});
-
-export const disableBackButton = () => ({
-  type: types.main.disableBackButton,
-});
-
-export const enableBackButton = () => ({
-  type: types.main.enableBackButton,
-});
-
-const setTotalButtons = (payload) => ({
-  type: types.main.setTotalButtons,
   payload,
 });
 
