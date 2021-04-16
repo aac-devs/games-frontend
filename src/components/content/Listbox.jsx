@@ -1,38 +1,26 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   hideListbox,
   setSelectedOption,
 } from "../../actions/components.actions";
-
-const BackgroudMenu = styled.div`
-  visibility: ${(props) => (props.show ? "visible" : "hidden")};
-  background-color: rgba(0, 0, 0, 0.8);
-  /* filter: brightness(50%); */
-  /* opacity: 0.8; */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 10;
-`;
+import { BackScreen } from "../../global-styles";
 
 const Container = styled.div`
+  /* position: ${(props) => props.position}; */
   position: absolute;
   top: ${(props) => props.top};
   left: ${(props) => props.left};
   right: ${(props) => props.right};
-  /* width: ${(props) => props.width}; */
   width: max-content;
   background-color: white;
   font-size: 16px;
   padding: 5px 10px;
   border-radius: 5px;
-  z-index: 100;
+  z-index: 1000;
   overflow-y: auto;
   @media (max-width: 768px) {
-    /* height: 95%; */
     height: max-content;
     display: flex;
     flex-direction: column;
@@ -43,6 +31,7 @@ const Container = styled.div`
     left: auto;
     bottom: 10px;
     right: 10px;
+    z-index: 1000;
   }
   li {
     border-radius: 4px;
@@ -74,37 +63,36 @@ const Listbox = ({
 }) => {
   const dispatch = useDispatch();
   const { listbox } = useSelector((state) => state.components);
+  const [back, setBack] = useState(true);
 
-  const handleBackground = (e) => {
-    e.stopPropagation();
-    dispatch(hideListbox(listName));
-  };
   const handleOptionChange = (e) => {
     const value = e.target.id;
     dispatch(setSelectedOption({ destination: listName, option: value }));
     dispatch(hideListbox(listName));
   };
+
+  const handleBackScreenClick = (e) => {
+    e.stopPropagation();
+    dispatch(hideListbox(listName));
+    setBack(false);
+  };
   return (
     <>
-      <BackgroudMenu
-        show={listbox[listName].visible}
-        onClick={handleBackground}
-      >
-        <Container width={width} left={left} right={right} top={top}>
-          <ul>
-            {listbox[listName].list.map((item) =>
-              !exclude.includes(item) ? (
-                <li key={item} onClick={handleOptionChange} id={item}>
-                  {item}&nbsp;
-                  {listbox[listName].selected === item && (
-                    <i className="fas fa-check"></i>
-                  )}
-                </li>
-              ) : null
-            )}
-          </ul>
-        </Container>
-      </BackgroudMenu>
+      {back && <BackScreen onClick={handleBackScreenClick} />}
+      <Container width={width} left={left} right={right} top={top}>
+        <ul>
+          {listbox[listName].list.map((item) =>
+            !exclude.includes(item) ? (
+              <li key={item} onClick={handleOptionChange} id={item}>
+                {item}&nbsp;
+                {listbox[listName].selected === item && (
+                  <i className="fas fa-check"></i>
+                )}
+              </li>
+            ) : null
+          )}
+        </ul>
+      </Container>
     </>
   );
 };

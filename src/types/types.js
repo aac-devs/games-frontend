@@ -31,6 +31,7 @@ export const types = {
     setSelectedOption: "[COMP] Set selected option",
     showListbox: "[COMP] Show listbox",
     hideListbox: "[COMP] Hide listbox",
+    listboxParent: "[COMP] Listbox parent",
     showRatingPicker: "[COMP] Show rating picker",
     hideRatingPicker: "[COMP] Hide rating picker",
     showDatePicker: "[COMP] Show date picker",

@@ -58,6 +58,7 @@ export const mainReducer = (state = initialState, action) => {
       };
 
     case types.main.setEditGame:
+      console.log(action.payload);
       return {
         ...state,
         data: {

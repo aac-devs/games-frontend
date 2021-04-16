@@ -21,7 +21,7 @@ const AppRouterContainer = styled.div`
     width: 100%;
     background-color: ${backgroundColor.primary.normal};
     opacity: 0.9;
-    z-index: 10;
+    z-index: 101;
   }
   .main {
     height: 100%;

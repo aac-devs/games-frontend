@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {
+  setListboxParent,
   setSelectedOption,
   showListbox,
 } from "../../actions/components.actions";
@@ -13,6 +14,7 @@ import {
   startLoadingGames,
   startSavingGame,
 } from "../../actions/main.actions";
+import { hideBackScreen, showBackScreen } from "../../actions/ui.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { Listbox } from "../index";
 
@@ -67,7 +69,9 @@ const Container = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 10;
+  /* z-index: 10; */
+  /* z-index: 1000; */
+
   position: relative;
   box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9);
   @media (max-width: 768px) {
@@ -102,6 +106,7 @@ const NavUl = styled.ul`
   position: relative;
   align-items: center;
   overflow-y: visible;
+  background-color: #fff;
 
   @media (max-width: 768px) {
     position: fixed;
@@ -160,6 +165,7 @@ const MenuItem = styled.div`
   padding: 3px 8px 0 8px;
   color: ${textColor.primary.dark};
   transition: background-color 0.3s;
+  cursor: pointer;
   &:hover {
     background-color: ${backgroundColor.primary.light};
   }
@@ -197,16 +203,16 @@ const ToggleButton = styled.button`
   }
 `;
 
-const BackScreen = styled.div`
-  background-color: #000;
-  opacity: 0.9;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-`;
+// const BackScreen = styled.div`
+//   background-color: #000;
+//   opacity: 0.9;
+//   height: 100%;
+//   width: 100%;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   z-index: -1;
+// `;
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -215,6 +221,7 @@ const Navbar = () => {
     data: { detailedGame },
   } = useSelector((state) => state.main);
   const { listbox } = useSelector((state) => state.components);
+  // const { backScreen } = useSelector((state) => state.ui);
 
   const [toggle, setToggle] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -232,6 +239,15 @@ const Navbar = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   console.log("useEffect");
+  //   if (!backScreen) {
+  //     console.log("toggle => false");
+  //     setToggle(false);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [backScreen]);
+
   const handleSearchGame = (e) => {
     e.preventDefault();
     dispatch(changeSearchName(searchValue));
@@ -239,7 +255,8 @@ const Navbar = () => {
   };
   const handleSearchClick = (e) => {
     setFocused(true);
-    setToggle(false);
+    // setToggle(false);
+    handleToggleButton();
   };
 
   const handleChangeSearchName = (e) => {
@@ -261,9 +278,9 @@ const Navbar = () => {
     );
   };
 
-  const handleHideToggle = () => {
-    setToggle(false);
-  };
+  // const handleHideToggle = () => {
+  //   setToggle(false);
+  // };
 
   const setNextScreen = (value) => {
     (value === "home" || value === "games" || value === "create") &&
@@ -275,15 +292,20 @@ const Navbar = () => {
     setToggle(false);
   };
 
-  const handleOrderFilter = (value) => {
+  const handleShowListbox = (value) => {
     dispatch(showListbox(value));
+    dispatch(setListboxParent("navbar"));
     setToggle(false);
+  };
+
+  const handleToggleButton = () => {
+    setToggle(!toggle);
   };
 
   return (
     <>
       <Container>
-        {toggle && <BackScreen onClick={handleHideToggle} />}
+        {/* {toggle && <BackScreen onClick={handleHideToggle} />} */}
         <NavLogo enabled={toggle}>aac-devs</NavLogo>
 
         {currentScreen === "games" && (
@@ -305,7 +327,8 @@ const Navbar = () => {
             </form>
           </SearchSection>
         )}
-        <ToggleButton onClick={() => setToggle(!toggle)}>
+        {/* <ToggleButton onClick={() => setToggle(!toggle)}> */}
+        <ToggleButton onClick={handleToggleButton}>
           {!toggle ? (
             <i className="fas fa-bars"></i>
           ) : (
@@ -343,13 +366,13 @@ const Navbar = () => {
           {currentScreen === "games" && toggle && (
             <>
               {toggle && <hr />}
-              <MenuItem onClick={(e) => handleOrderFilter("sorted")}>
+              <MenuItem onClick={(e) => handleShowListbox("sorted")}>
                 order by
               </MenuItem>
-              <MenuItem onClick={(e) => handleOrderFilter("source")}>
+              <MenuItem onClick={(e) => handleShowListbox("source")}>
                 data source
               </MenuItem>
-              <MenuItem onClick={(e) => handleOrderFilter("genres")}>
+              <MenuItem onClick={(e) => handleShowListbox("genres")}>
                 genre
               </MenuItem>
             </>
@@ -367,13 +390,18 @@ const Navbar = () => {
             </>
           )}
 
-          {listbox.sorted.visible && (
-            <Listbox listName="sorted" left={0} right="auto" />
+          {listbox.sorted.visible && listbox.parent === "navbar" && (
+            <Listbox
+              listName="sorted"
+              left="200px"
+              right="auto"
+              position="fixed"
+            />
           )}
-          {listbox.source.visible && (
+          {listbox.source.visible && listbox.parent === "navbar" && (
             <Listbox listName="source" left={0} right="auto" />
           )}
-          {listbox.genres.visible && (
+          {listbox.genres.visible && listbox.parent === "navbar" && (
             <Listbox listName="genres" left={0} right="auto" />
           )}
         </NavUl>

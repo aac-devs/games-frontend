@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 export const backgroundColor = {
   primary: {
@@ -26,6 +26,16 @@ export const textColor = {
   },
 };
 
+export const BackScreen = styled.div`
+  background-color: rgba(255, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+`;
+
 export const GlobalStyles = createGlobalStyle`
 
 *{
@@ -44,6 +54,7 @@ body, html {
   font-family: 'Roboto', sans-serif, Helvetica, Arial;
   background-attachment: fixed;
   background-color: ${backgroundColor.primary.dark};
+  /* background-color: lime; */
 
 }
 

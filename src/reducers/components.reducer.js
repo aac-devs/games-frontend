@@ -22,6 +22,7 @@ const initialState = {
       selected: "None",
       visible: false,
     },
+    parent: "none", // 'navbar' | 'main'
   },
   ratingPicker: {
     show: false,
@@ -116,6 +117,15 @@ export const componentsReducer = (state = initialState, action) => {
         ...state,
         datePicker: {
           show: false,
+        },
+      };
+
+    case types.components.listboxParent:
+      return {
+        ...state,
+        listbox: {
+          ...state.listbox,
+          parent: action.payload,
         },
       };
 

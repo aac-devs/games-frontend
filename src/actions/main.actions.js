@@ -10,36 +10,6 @@ import {
   startLoading,
 } from "./ui.actions";
 
-// export const startLoadingGenres = () => {
-//   return async (dispatch) => {
-//     try {
-//       dispatch(removeError());
-//       dispatch(startLoading());
-//       const resp = await fetchingData(`games/genres`);
-//       const { ok, results: list, message } = await resp.json();
-//       ok ? dispatch(loadGenres(list)) : dispatch(setError(message));
-//       dispatch(finishLoading());
-//     } catch (error) {
-//       console.error(`Something went wrong fetching data!`);
-//     }
-//   };
-// };
-
-// export const startLoadingPlatforms = () => {
-//   return async (dispatch) => {
-//     try {
-//       dispatch(removeError());
-//       dispatch(startLoading());
-//       const resp = await fetchingData(`games/platforms`);
-//       const { ok, results: list, message } = await resp.json();
-//       ok ? dispatch(loadPlatforms(list)) : dispatch(setError(message));
-//       dispatch(finishLoading());
-//     } catch (error) {
-//       console.error(`Something went wrong fetching data!`);
-//     }
-//   };
-// };
-
 export const startLoadingPlatformsGenres = (option) => {
   return async (dispatch) => {
     try {
@@ -64,7 +34,9 @@ const loadPlatformsGenres = (payload) => ({
 
 export const startSettingEditGame = (edit = "") => {
   return (dispatch, getState) => {
+    console.log({ edit });
     if (edit === "new") {
+      console.log("new game");
       dispatch(
         setEditGame({
           name: "",
@@ -77,6 +49,7 @@ export const startSettingEditGame = (edit = "") => {
         })
       );
     } else {
+      console.log("update game");
       const { detailedGame } = getState().main.data;
       dispatch(setEditGame(detailedGame));
     }
@@ -262,7 +235,7 @@ const deleteGame = (payload) => ({
   payload,
 });
 
-const setEditGame = (payload) => ({
+export const setEditGame = (payload) => ({
   type: types.main.setEditGame,
   payload,
 });

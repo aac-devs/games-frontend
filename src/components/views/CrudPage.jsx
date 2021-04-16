@@ -8,6 +8,7 @@ import { backgroundColor, textColor } from "../../global-styles";
 import {
   changeInputValue,
   clearArrays,
+  setEditGame,
   setTemporaryImage,
   startLoadingDetailedGame,
   startLoadingPlatformsGenres,
@@ -18,6 +19,8 @@ import {
 import {
   hideDatePicker,
   hideRatingPicker,
+  setListboxParent,
+  setSelectedOption,
   showDatePicker,
   showListbox,
   showRatingPicker,
@@ -236,11 +239,9 @@ const CrudPage = () => {
   useEffect(() => {
     dispatch(clearArrays());
     if (main.data.genres.length === 0) {
-      // dispatch(startLoadingGenres());
       dispatch(startLoadingPlatformsGenres("genres"));
     }
     if (main.data.platforms.length === 0) {
-      // dispatch(startLoadingPlatforms());
       dispatch(startLoadingPlatformsGenres("platforms"));
     }
     if (currentScreen === "create") {
@@ -250,8 +251,16 @@ const CrudPage = () => {
       console.log("Estoy en Crud Page");
       console.log(params.id);
       dispatch(startLoadingDetailedGame(params.id));
-      dispatch(startSettingEditGame());
+      dispatch(startSettingEditGame("edit"));
     }
+
+    return () => {
+      dispatch(setEditGame(null));
+      dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
+      dispatch(
+        setSelectedOption({ destination: "platforms", option: "Platforms" })
+      );
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -341,6 +350,11 @@ const CrudPage = () => {
 
   // TODO: para crear un juego nuevo, inicializar detailedGame con los valores en blanco y SIN incluir id
 
+  const handleShowListbox = (option) => {
+    dispatch(showListbox(option));
+    dispatch(setListboxParent("crud"));
+  };
+
   return (
     <Container>
       <Grid>
@@ -418,12 +432,13 @@ const CrudPage = () => {
               theme={
                 listbox.genres.selected === "Genres" ? "primary" : "secondary"
               }
-              onClick={() => dispatch(showListbox("genres"))}
+              // onClick={() => dispatch(showListbox("genres"))}
+              onClick={() => handleShowListbox("genres")}
             >
               <span>Add genre</span>
               <i className="fas fa-chevron-down"></i>
             </PagActionBtn>
-            {listbox.genres.visible && (
+            {listbox.genres.visible && listbox.parent === "crud" && (
               <Listbox
                 listName="genres"
                 left="0"
@@ -455,12 +470,13 @@ const CrudPage = () => {
                   ? "primary"
                   : "secondary"
               }
-              onClick={() => dispatch(showListbox("platforms"))}
+              // onClick={() => dispatch(showListbox("platforms"))}
+              onClick={() => handleShowListbox("platforms")}
             >
               <span>Add Platform</span>
               <i className="fas fa-chevron-down"></i>
             </PagActionBtn>
-            {listbox.platforms.visible && (
+            {listbox.platforms.visible && listbox.parent === "crud" && (
               <Listbox
                 listName="platforms"
                 left="0"

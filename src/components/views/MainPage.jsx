@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
+  setListboxParent,
   showListbox,
   startLoadingListboxGenres,
 } from "../../actions/components.actions";
@@ -127,7 +128,6 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const main = useSelector((state) => state.main);
   const { listbox } = useSelector((state) => state.components);
-
   const observer = useRef(
     new IntersectionObserver(
       (entries) => {
@@ -192,7 +192,6 @@ const MainPage = () => {
 
   useEffect(() => {
     dispatch(startModifyingGames());
-    // dispatch(setActiveButton(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [main.orderBy, main.orderSense, main.filterSource, main.filterGenre]);
 
@@ -207,6 +206,11 @@ const MainPage = () => {
       : dispatch(changeOrderSense("lower-to-higher"));
   };
 
+  const handleShowListbox = (option) => {
+    dispatch(showListbox(option));
+    dispatch(setListboxParent("main"));
+  };
+
   return (
     <Container>
       <MainSection>
@@ -216,7 +220,7 @@ const MainPage = () => {
               <>
                 <PagActionBtn
                   theme="primary"
-                  onClick={() => dispatch(showListbox("sorted"))}
+                  onClick={() => handleShowListbox("sorted")}
                 >
                   <span>
                     Order by:&nbsp;&nbsp;
@@ -224,7 +228,7 @@ const MainPage = () => {
                   </span>
                   <i className="fas fa-chevron-down"></i>
                 </PagActionBtn>
-                {listbox.sorted.visible && (
+                {listbox.sorted.visible && listbox.parent === "main" && (
                   <Listbox listName="sorted" left={0} right="auto" />
                 )}
                 <PagUpDownBtn onClick={handleChangeOrderSense}>
@@ -252,13 +256,14 @@ const MainPage = () => {
                 theme={
                   listbox.source.selected === "All" ? "primary" : "secondary"
                 }
-                onClick={() => dispatch(showListbox("source"))}
+                onClick={() => handleShowListbox("source")}
+                // onClick={() => dispatch(showListbox("source"))}
               >
                 {listbox.source.selected}
                 &nbsp;&nbsp;&nbsp;
                 <i className="fas fa-chevron-down"></i>
               </PagActionBtn>
-              {listbox.source.visible && (
+              {listbox.source.visible && listbox.parent === "main" && (
                 <Listbox listName="source" left={0} right="auto" />
               )}
             </PagActionsSection>
@@ -268,13 +273,14 @@ const MainPage = () => {
                 theme={
                   listbox.genres.selected === "Genres" ? "primary" : "secondary"
                 }
-                onClick={() => dispatch(showListbox("genres"))}
+                onClick={() => handleShowListbox("genres")}
+                // onClick={() => dispatch(showListbox("genres"))}
               >
                 <span>{listbox.genres.selected}</span>(
                 {main.data.games.render.length})
                 <i className="fas fa-chevron-down"></i>
               </PagActionBtn>
-              {listbox.genres.visible && (
+              {listbox.genres.visible && listbox.parent === "main" && (
                 <Listbox listName="genres" left="0" right="auto" />
               )}
             </PagActionsSection>

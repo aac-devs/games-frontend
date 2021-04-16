@@ -81,3 +81,8 @@ export const showDatePicker = () => ({
 export const hideDatePicker = () => ({
   type: types.components.hideDatePicker,
 });
+
+export const setListboxParent = (payload) => ({
+  type: types.components.listboxParent,
+  payload,
+});
