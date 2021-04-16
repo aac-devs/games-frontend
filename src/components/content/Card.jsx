@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {
   setCurrentScreen,
+  startDeletingGame,
   unloadDetailedGame,
 } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
@@ -47,25 +48,16 @@ const ImageSection = styled.div`
   background-color: cyan;
   min-width: 40%;
   min-height: 40%;
-
   width: 100%;
   height: 100%;
-  /* background-image: url(${(props) => props.image});
-  background-size: cover;
-  background-position: top;
-  background-repeat: no-repeat;
-  filter: brightness(90%); */
   background-color: ${backgroundColor.primary.dark};
-  /* background-color: transparent; */
   overflow: hidden;
-  /* text-align: center; */
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 2px solid ${backgroundColor.primary.light};
   border-bottom: 2px solid ${backgroundColor.primary.light};
   img {
-    /* max-width: 100%; */
     max-height: 100%;
     filter: brightness(70%);
     box-shadow: 0px 0px 10px rgba(250, 250, 250, 0.5);
@@ -75,12 +67,10 @@ const ImageSection = styled.div`
 const Title = styled.div`
   grid-area: ttl;
   place-self: center stretch;
-  /* background-color: dodgerblue; */
   color: ${textColor.primary.light};
   opacity: 1;
   font-size: 24px;
   padding: 0 10px;
-  /* margin-bottom: 7px; */
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,13 +176,42 @@ const Hr = styled.hr`
   background-color: ${textColor.primary.dark};
 `;
 
+const color = "#e91e63";
+
+const DeleteButton = styled.button`
+  position: absolute;
+  bottom: 7px;
+  right: 7px;
+  border-radius: 50%;
+  /* background-color: ${backgroundColor.secondary.normal}; */
+  background-color: #e91e63;
+  filter: brightness(90%);
+
+  border: none;
+  /* box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9); */
+  box-shadow: 0 0 5px ${color}, 0 0 10px ${color}, 0 0 20px ${color};
+  /* 0 0 60px ${color}, 0 0 80px ${color}, 0 0 100px ${color}; */
+  color: white;
+  padding: 10px 11px;
+  transition: all 0.2s;
+  font-family: "Roboto", sans-serif, Helvetica, Arial;
+  font-weight: 700;
+  cursor: pointer;
+  &:hover {
+    /* background-color: ${backgroundColor.secondary.light}; */
+    background-color: #ff6291;
+
+    transform: scale(1.04);
+  }
+`;
+
 const Card = memo(
   ({ id, image, name, released, rating, genres, setElement, enableDelete }) => {
     const dispatch = useDispatch();
-    // const handleDeleteGame = (e) => {
-    //   e.stopPropagation();
-    //   dispatch(startDeletingGame(id));
-    // };
+    const handleDeleteGame = (e) => {
+      e.stopPropagation();
+      dispatch(startDeletingGame(id));
+    };
     const ratingColor =
       rating >= 4.5
         ? "linear-gradient(180deg, #b4ec51, #429321)"
@@ -213,9 +232,7 @@ const Card = memo(
 
     return (
       <Container ref={setElement}>
-        <ImageSection
-        // image={image !== "" ? image : "/no-image.jpg"}
-        >
+        <ImageSection>
           <img src={image} alt="ima" />
         </ImageSection>
         <Title>
@@ -232,7 +249,6 @@ const Card = memo(
         </Released>
         <Genres>
           <Hr />
-
           <h5>Genres</h5>
           <GenresTags>
             {genres.map((genre) => (
@@ -244,6 +260,11 @@ const Card = memo(
           <h5>Rating</h5>
           <span>{rating}</span>
         </Rating>
+        {enableDelete && (
+          <DeleteButton onClick={handleDeleteGame}>
+            <i className="fas fa-minus fa-2x"></i>
+          </DeleteButton>
+        )}
       </Container>
     );
   }

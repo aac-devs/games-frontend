@@ -184,25 +184,39 @@ export const startSavingGame = () => {
     try {
       dispatch(removeError());
       dispatch(startLoading());
+      dispatch(setSavingGameFlag());
+
+      //TODO: Problema al poner la imagen en editGame
+      const det = getState().main.data.editGame;
+      console.log({ det });
       const file = getState().main.data.temporaryImage;
       if (file) {
         const imageUrl = await uploadImage(file);
         dispatch(changeInputValue({ name: "image", value: imageUrl }));
       }
       const { id: gameId, ...data } = getState().main.data.editGame;
+      const det2 = getState().main.data.editGame;
+
+      console.log({ data });
+      console.log({ det2 });
+
       const method = gameId ? "PUT" : "POST";
       const endpoint = gameId ? `games/edit/${gameId}` : "games/create";
       const resp = await fetchingData(endpoint, data, method);
       const { ok, id, msg } = await resp.json();
       if (ok) {
-        const newData = {
-          id,
-          name: data.name,
-          image: data.image,
-          rating: data.rating,
-          genres: data.genres,
-        };
-        gameId ? dispatch(updateGame(newData)) : dispatch(addNewGame(newData));
+        console.log("Terminó de guardar.");
+        dispatch(resetSavingGameFlag());
+
+        // dispatch(setCurrentScreen("games"));
+        // const newData = {
+        //   id,
+        //   name: data.name,
+        //   image: data.image,
+        //   rating: data.rating,
+        //   genres: data.genres,
+        // };
+        // gameId ? dispatch(updateGame(newData)) : dispatch(addNewGame(newData));
       } else {
         dispatch(setError(msg));
       }
@@ -220,7 +234,7 @@ export const startDeletingGame = (id) => {
     try {
       dispatch(removeError());
       dispatch(startLoading());
-      const resp = await fetchingData(`crud/videogame/${id}`, null, "DELETE");
+      const resp = await fetchingData(`games/delete/${id}`, null, "DELETE");
       const { ok, msg } = await resp.json();
       ok ? dispatch(deleteGame(id)) : dispatch(setError(msg));
       dispatch(finishLoading());
@@ -238,6 +252,14 @@ const deleteGame = (payload) => ({
 export const setEditGame = (payload) => ({
   type: types.main.setEditGame,
   payload,
+});
+
+export const setSavingGameFlag = () => ({
+  type: types.main.setSavingGameFlag,
+});
+
+export const resetSavingGameFlag = () => ({
+  type: types.main.resetSavingGameFlag,
 });
 
 // const loadPlatforms = (payload) => ({

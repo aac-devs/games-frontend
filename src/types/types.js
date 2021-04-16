@@ -23,6 +23,8 @@ export const types = {
     updateDeletedGame: "[MAIN] Update deleted game",
     setGoSearch: "[MAIN] Set go search",
     resetGoSearch: "[MAIN] Reset go search",
+    setSavingGameFlag: "[MAIN] Set saving game flag",
+    resetSavingGameFlag: "[MAIN] Reset saving game flag",
   },
 
   components: {

@@ -13,6 +13,7 @@ const initialState = {
     detailedGame: null,
     editGame: null,
     temporaryImage: null,
+    savingGameFlag: false,
   },
   nextPage: null,
   buttons: {
@@ -68,6 +69,9 @@ export const mainReducer = (state = initialState, action) => {
       };
 
     case types.main.changeInputValue:
+      console.log("dentro del reducer:");
+      console.log(action.payload);
+
       return {
         ...state,
         data: {
@@ -252,6 +256,24 @@ export const mainReducer = (state = initialState, action) => {
         data: {
           ...state.data,
           search: false,
+        },
+      };
+
+    case types.main.setSavingGameFlag:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          savingGameFlag: true,
+        },
+      };
+
+    case types.main.resetSavingGameFlag:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          savingGameFlag: false,
         },
       };
 

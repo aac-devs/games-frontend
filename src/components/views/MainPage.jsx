@@ -127,6 +127,7 @@ const PagUpDownBtn = styled.button`
 const MainPage = () => {
   const dispatch = useDispatch();
   const main = useSelector((state) => state.main);
+  // const { loading } = useSelector((state) => state.ui);
   const { listbox } = useSelector((state) => state.components);
   const observer = useRef(
     new IntersectionObserver(
@@ -155,10 +156,19 @@ const MainPage = () => {
   }, [element, main.orderBy]);
 
   useEffect(() => {
+    console.log("main-page");
     dispatch(startLoadingPlatformsGenres("genres"));
     dispatch(startLoadingGames(1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log("loading..", main.data.savingGameFlag);
+    if (!main.data.savingGameFlag) {
+      dispatch(startLoadingGames(1));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [main.data.savingGameFlag]);
 
   useEffect(() => {
     if (main.data.search && main.data.searchName !== "") {
@@ -289,8 +299,9 @@ const MainPage = () => {
 
         <ListSection>
           {main.data.games.render.length > 0 &&
-            main.data.games.render.map((game, index) =>
-              main.data.games.render.length >= 10 ? (
+            main.data.games.render.map(
+              (game, index) => (
+                // main.data.games.render.length >= 10 ? (
                 <Card
                   setElement={
                     main.data.games.render.length - 1 === index
@@ -298,12 +309,22 @@ const MainPage = () => {
                       : null
                   }
                   key={game.id}
-                  enableDelete={false}
+                  // enableDelete={false}
+                  enableDelete={
+                    game.id.toString().startsWith("own") ? true : false
+                  }
                   {...game}
                 />
-              ) : (
-                <Card key={game.id} enableDelete={false} {...game} />
               )
+              // ) : (
+              // <Card
+              //   key={game.id}
+              //   enableDelete={
+              //     game.id.toString().startsWith("own") ? true : false
+              //   }
+              //   {...game}
+              // />
+              // )
             )}
         </ListSection>
       </MainSection>

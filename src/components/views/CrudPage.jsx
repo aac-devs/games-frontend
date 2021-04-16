@@ -391,6 +391,7 @@ const CrudPage = () => {
           <DataDescription>
             <textarea
               name="description"
+              maxLength={200}
               onChange={handleInputChange}
               placeholder="description"
               value={data.description}

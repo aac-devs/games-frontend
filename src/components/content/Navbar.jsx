@@ -9,13 +9,13 @@ import {
 } from "../../actions/components.actions";
 import {
   changeSearchName,
+  clearArrays,
   setCurrentScreen,
   setGoSearch,
   startLoadingGames,
   startSavingGame,
 } from "../../actions/main.actions";
-import { hideBackScreen, showBackScreen } from "../../actions/ui.actions";
-import { backgroundColor, textColor } from "../../global-styles";
+import { backgroundColor, BackScreen, textColor } from "../../global-styles";
 import { Listbox } from "../index";
 
 const SearchSection = styled.div`
@@ -69,11 +69,9 @@ const Container = styled.nav`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* z-index: 10; */
-  /* z-index: 1000; */
-
   position: relative;
   box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9);
+  z-index: 20;
   @media (max-width: 768px) {
     height: 60px;
   }
@@ -106,7 +104,7 @@ const NavUl = styled.ul`
   position: relative;
   align-items: center;
   overflow-y: visible;
-  background-color: #fff;
+  /* background-color: #fff; */
 
   @media (max-width: 768px) {
     position: fixed;
@@ -121,6 +119,7 @@ const NavUl = styled.ul`
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     transition: right 0.3s;
+    overflow-y: scroll;
   }
 `;
 
@@ -203,17 +202,6 @@ const ToggleButton = styled.button`
   }
 `;
 
-// const BackScreen = styled.div`
-//   background-color: #000;
-//   opacity: 0.9;
-//   height: 100%;
-//   width: 100%;
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   z-index: -1;
-// `;
-
 const Navbar = () => {
   const dispatch = useDispatch();
   const {
@@ -221,7 +209,6 @@ const Navbar = () => {
     data: { detailedGame },
   } = useSelector((state) => state.main);
   const { listbox } = useSelector((state) => state.components);
-  // const { backScreen } = useSelector((state) => state.ui);
 
   const [toggle, setToggle] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -271,11 +258,13 @@ const Navbar = () => {
 
   const handleSaveGame = (e) => {
     //TODO: Validar campos:
+    dispatch(clearArrays());
     dispatch(startSavingGame());
     dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
     dispatch(
       setSelectedOption({ destination: "platforms", option: "Platforms" })
     );
+    console.log("nav-bar");
   };
 
   // const handleHideToggle = () => {
@@ -304,8 +293,8 @@ const Navbar = () => {
 
   return (
     <>
+      {toggle && <BackScreen onClick={handleToggleButton} />}
       <Container>
-        {/* {toggle && <BackScreen onClick={handleHideToggle} />} */}
         <NavLogo enabled={toggle}>aac-devs</NavLogo>
 
         {currentScreen === "games" && (

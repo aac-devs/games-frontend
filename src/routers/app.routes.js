@@ -19,8 +19,9 @@ const AppRouterContainer = styled.div`
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: ${backgroundColor.primary.normal};
-    opacity: 0.9;
+    /* background-color: ${backgroundColor.primary.normal}; */
+    background-color: rgba(0, 0, 0, 0.7);
+    /* opacity: 0.9; */
     z-index: 101;
   }
   .main {
