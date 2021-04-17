@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import dayjs from "dayjs";
-import {
-  clearArrays,
-  startLoadingDetailedGame,
-} from "../../actions/main.actions";
+// import {
+//   clearArrays,
+//   startLoadingDetailedGame,
+// } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { useParams } from "react-router-dom";
+import { startLoadingArrays } from "../../actions/games.actions";
 
 const Container = styled.div`
   display: flex;
@@ -160,24 +161,17 @@ const GenPlatBody = styled.div`
   }
 `;
 
-const DetailPage = ({ history }) => {
+const DetailPage = () => {
   let params = useParams();
   const dispatch = useDispatch();
-  const {
-    data: { detailedGame },
-  } = useSelector((state) => state.main);
+  const { detailedGame } = useSelector((state) => state.games);
 
   useEffect(() => {
-    dispatch(clearArrays());
+    dispatch(startLoadingArrays("detailedGame", `games/detail/${params.id}`));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    dispatch(startLoadingDetailedGame(params.id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [history]);
-
-  if (!detailedGame) {
+  if (!detailedGame[0]?.id) {
     return <></>;
   }
 
@@ -189,7 +183,7 @@ const DetailPage = ({ history }) => {
     description,
     genres,
     platforms,
-  } = detailedGame;
+  } = detailedGame[0];
   const ratingColor =
     rating >= 4.5
       ? "linear-gradient(180deg, #b4ec51, #429321)"

@@ -200,13 +200,13 @@ export const startSavingGame = () => {
       console.log({ data });
       console.log({ det2 });
 
-      const method = gameId ? "PUT" : "POST";
-      const endpoint = gameId ? `games/edit/${gameId}` : "games/create";
-      const resp = await fetchingData(endpoint, data, method);
-      const { ok, id, msg } = await resp.json();
-      if (ok) {
-        console.log("Terminó de guardar.");
-        dispatch(resetSavingGameFlag());
+      // const method = gameId ? "PUT" : "POST";
+      // const endpoint = gameId ? `games/edit/${gameId}` : "games/create";
+      // const resp = await fetchingData(endpoint, data, method);
+      // const { ok, id, msg } = await resp.json();
+      // if (ok) {
+        // console.log("Terminó de guardar.");
+        // dispatch(resetSavingGameFlag());
 
         // dispatch(setCurrentScreen("games"));
         // const newData = {
@@ -217,9 +217,9 @@ export const startSavingGame = () => {
         //   genres: data.genres,
         // };
         // gameId ? dispatch(updateGame(newData)) : dispatch(addNewGame(newData));
-      } else {
-        dispatch(setError(msg));
-      }
+      // } else {
+        // dispatch(setError(msg));
+      // }
       dispatch(finishLoading());
       dispatch(resetTemporaryImage());
       // TODO: redirigir a 'games' ==> dispatch(setCurrentScreen('games'))

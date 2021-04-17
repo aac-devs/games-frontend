@@ -27,6 +27,22 @@ export const types = {
     resetSavingGameFlag: "[MAIN] Reset saving game flag",
   },
 
+  games: {
+    cleanArrays: "[GAMES] Clean arrays",
+    loadArray: "[GAMES] Load array",
+    loadNextPage: "[GAMES] Load next page",
+    enableSavingGameFlag: "[GAMES] Enable saving game flag",
+    disableSavingGameFlag: "[GAMES] Disable saving game flag",
+    loadRendererGames: "[GAMES] Load renderer games",
+    changeOrderSense: "[GAMES] Change order sense",
+    changeOrderBy: "[GAMES] Change order by",
+    changeFilterSource: "[GAMES] Change filter source",
+    changeFilterGenre: "[GAMES] Change filter genre",
+    changeInputValue: "[GAMES] Change input value",
+    setTemporaryImage: "[GAMES] Set temporay image",
+    resetTemporaryImage: "[GAMES] Reset temporay image",
+  },
+
   components: {
     loadGenresNames: "[COMP] Load genres names",
     loadPlatformsNames: "[COMP] Load platforms names",

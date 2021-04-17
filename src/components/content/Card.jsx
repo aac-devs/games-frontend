@@ -12,11 +12,11 @@ import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import {
-  setCurrentScreen,
-  startDeletingGame,
-  unloadDetailedGame,
-} from "../../actions/main.actions";
+// import {
+//   setCurrentScreen,
+//   startDeletingGame,
+//   unloadDetailedGame,
+// } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 
 const Container = styled.div`
@@ -210,7 +210,7 @@ const Card = memo(
     const dispatch = useDispatch();
     const handleDeleteGame = (e) => {
       e.stopPropagation();
-      dispatch(startDeletingGame(id));
+      // dispatch(startDeletingGame(id));
     };
     const ratingColor =
       rating >= 4.5
@@ -222,12 +222,12 @@ const Card = memo(
     const handleClearDetailedGame = () => {
       console.log("clear detailed");
       if (id.toString().startsWith("own")) {
-        dispatch(setCurrentScreen("detail-own"));
+        // dispatch(setCurrentScreen("detail-own"));
       } else {
-        dispatch(setCurrentScreen("detail"));
+        // dispatch(setCurrentScreen("detail"));
       }
 
-      dispatch(unloadDetailedGame());
+      // dispatch(unloadDetailedGame());
     };
 
     return (

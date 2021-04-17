@@ -2,10 +2,7 @@ import { types } from "../types/types";
 
 export const startLoadingListboxGenres = (header = true) => {
   return (dispatch, getState) => {
-    const {
-      data: { genres },
-      filterGenre,
-    } = getState().main;
+    const { genres, filterGenre } = getState().games;
     let namesArray = genres.map((item) => item.name);
     namesArray.sort();
     if (header) {
@@ -29,8 +26,8 @@ const loadGenres = (payload) => ({
 export const startLoadingListboxPlatforms = (header) => {
   return (dispatch, getState) => {
     const {
-      data: { platforms },
-    } = getState().main;
+      platforms,
+    } = getState().games;
     let namesArray = platforms.map((item) => item.name);
     namesArray.sort();
     if (header) {

@@ -7,14 +7,15 @@ import {
   setSelectedOption,
   showListbox,
 } from "../../actions/components.actions";
-import {
-  changeSearchName,
-  clearArrays,
-  setCurrentScreen,
-  setGoSearch,
-  startLoadingGames,
-  startSavingGame,
-} from "../../actions/main.actions";
+import { startSavingGame } from "../../actions/games.actions";
+// import {
+//   changeSearchName,
+//   clearArrays,
+//   setCurrentScreen,
+//   setGoSearch,
+//   startLoadingGames,
+//   startSavingGame,
+// } from "../../actions/main.actions";
 import { backgroundColor, BackScreen, textColor } from "../../global-styles";
 import { Listbox } from "../index";
 
@@ -205,9 +206,9 @@ const ToggleButton = styled.button`
 const Navbar = () => {
   const dispatch = useDispatch();
   const {
-    currentScreen,
-    data: { detailedGame },
-  } = useSelector((state) => state.main);
+    // currentScreen,
+    detailedGame,
+  } = useSelector((state) => state.games);
   const { listbox } = useSelector((state) => state.components);
 
   const [toggle, setToggle] = useState(false);
@@ -237,8 +238,8 @@ const Navbar = () => {
 
   const handleSearchGame = (e) => {
     e.preventDefault();
-    dispatch(changeSearchName(searchValue));
-    dispatch(setGoSearch());
+    // dispatch(changeSearchName(searchValue));
+    // dispatch(setGoSearch());
   };
   const handleSearchClick = (e) => {
     setFocused(true);
@@ -252,18 +253,20 @@ const Navbar = () => {
 
   const handleResetSearching = (e) => {
     setSearchValue("");
-    dispatch(changeSearchName(""));
-    dispatch(startLoadingGames(1));
+    // dispatch(changeSearchName(""));
+    // dispatch(startLoadingGames(1));
   };
 
   const handleSaveGame = (e) => {
+    console.log("handleSaveGame");
+
     //TODO: Validar campos:
-    dispatch(clearArrays());
+    // dispatch(clearArrays());
     dispatch(startSavingGame());
-    dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
-    dispatch(
-      setSelectedOption({ destination: "platforms", option: "Platforms" })
-    );
+    // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
+    // dispatch(
+    // setSelectedOption({ destination: "platforms", option: "Platforms" })
+    // );
     console.log("nav-bar");
   };
 
@@ -272,18 +275,20 @@ const Navbar = () => {
   // };
 
   const setNextScreen = (value) => {
-    (value === "home" || value === "games" || value === "create") &&
-      dispatch(setCurrentScreen(value));
-    (value === "cancel" || value === "save") &&
-      dispatch(setCurrentScreen("games"));
+    console.log("setNextScreen");
+
+    // (value === "home" || value === "games" || value === "create") &&
+    // dispatch(setCurrentScreen(value));
+    // (value === "cancel" || value === "save") &&
+    // dispatch(setCurrentScreen("games"));
     value === "save" && handleSaveGame();
-    value === "update" && dispatch(setCurrentScreen("update"));
+    // value === "update" && dispatch(setCurrentScreen("update"));
     setToggle(false);
   };
 
   const handleShowListbox = (value) => {
-    dispatch(showListbox(value));
-    dispatch(setListboxParent("navbar"));
+    // dispatch(showListbox(value));
+    // dispatch(setListboxParent("navbar"));
     setToggle(false);
   };
 
@@ -297,7 +302,7 @@ const Navbar = () => {
       <Container>
         <NavLogo enabled={toggle}>aac-devs</NavLogo>
 
-        {currentScreen === "games" && (
+        {/* {currentScreen === "games" && (
           <SearchSection focused={focused}>
             <form onSubmit={handleSearchGame}>
               <input
@@ -315,7 +320,7 @@ const Navbar = () => {
               )}
             </form>
           </SearchSection>
-        )}
+        )} */}
         {/* <ToggleButton onClick={() => setToggle(!toggle)}> */}
         <ToggleButton onClick={handleToggleButton}>
           {!toggle ? (
@@ -327,57 +332,56 @@ const Navbar = () => {
         <NavUl
           className={`${toggle ? "nav-menu-visible" : "nav-menu-invisible"}`}
         >
-          {currentScreen !== "home" && (
-            <NavLi onClick={(e) => setNextScreen("home")} to="/">
-              home
-            </NavLi>
-          )}
-          {currentScreen !== "games" && (
-            <NavLi onClick={(e) => setNextScreen("games")} to="/games">
-              games
-            </NavLi>
-          )}
+          {/* {currentScreen !== "home" && ( */}
+          <NavLi onClick={(e) => setNextScreen("home")} to="/">
+            home
+          </NavLi>
+          {/* )} */}
+          {/* {currentScreen !== "games" && ( */}
+          <NavLi onClick={(e) => setNextScreen("games")} to="/games">
+            games
+          </NavLi>
+          {/* )} */}
 
-          {currentScreen !== "create" && currentScreen !== "update" && (
-            <NavLi onClick={(e) => setNextScreen("create")} to="/games/create">
-              new
-            </NavLi>
-          )}
-          {currentScreen === "detail-own" && (
-            <NavLi
-              onClick={(e) => setNextScreen("update")}
-              to={`/games/update/${detailedGame?.id}`}
-            >
-              edit
-            </NavLi>
-          )}
+          {/* {currentScreen !== "create" && currentScreen !== "update" && ( */}
+          <NavLi onClick={(e) => setNextScreen("create")} to="/games/create">
+            new
+          </NavLi>
+          {/* )} */}
+          {/* {currentScreen === "detail-own" && ( */}
+          <NavLi
+            onClick={(e) => setNextScreen("update")}
+            to={`/games/update/${detailedGame[0]?.id}`}
+          >
+            edit
+          </NavLi>
+          {/* // )} */}
 
-          {currentScreen === "games" && toggle && (
-            <>
-              {toggle && <hr />}
-              <MenuItem onClick={(e) => handleShowListbox("sorted")}>
-                order by
-              </MenuItem>
-              <MenuItem onClick={(e) => handleShowListbox("source")}>
-                data source
-              </MenuItem>
-              <MenuItem onClick={(e) => handleShowListbox("genres")}>
-                genre
-              </MenuItem>
-            </>
-          )}
-          {(currentScreen === "create" || currentScreen === "update") && (
-            <>
-              {toggle && <hr />}
-
-              <NavLi onClick={(e) => setNextScreen("save")} to="/games">
-                save
-              </NavLi>
-              <NavLi onClick={(e) => setNextScreen("cancel")} to="/games">
-                cancel
-              </NavLi>
-            </>
-          )}
+          {/* {currentScreen === "games" && toggle && ( */}
+          <>
+            {toggle && <hr />}
+            <MenuItem onClick={(e) => handleShowListbox("sorted")}>
+              order by
+            </MenuItem>
+            <MenuItem onClick={(e) => handleShowListbox("source")}>
+              data source
+            </MenuItem>
+            <MenuItem onClick={(e) => handleShowListbox("genres")}>
+              genre
+            </MenuItem>
+          </>
+          {/* )} */}
+          {/* {(currentScreen === "create" || currentScreen === "update") && ( */}
+          <>
+            {toggle && <hr />}
+            <NavLi onClick={(e) => setNextScreen("save")} to="/games">
+              save
+            </NavLi>
+            <NavLi onClick={(e) => setNextScreen("cancel")} to="/games">
+              cancel
+            </NavLi>
+          </>
+          {/* )} */}
 
           {listbox.sorted.visible && listbox.parent === "navbar" && (
             <Listbox

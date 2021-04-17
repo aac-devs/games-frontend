@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { clearArrays, setCurrentScreen } from "../../actions/main.actions";
+// import { clearArrays, setCurrentScreen } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 
 const Background = styled.div`
@@ -49,10 +49,10 @@ const Title = styled(Link)`
 `;
 
 const HomePage = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(clearArrays());
+    // dispatch(clearArrays());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -64,7 +64,10 @@ const HomePage = () => {
       }}
     >
       <Background className="art art_colored">
-        <Title onClick={() => dispatch(setCurrentScreen("games"))} to="/games">
+        <Title
+          // onClick={() => dispatch(setCurrentScreen("games"))}
+          to="/games"
+        >
           aac-videogames
         </Title>
       </Background>

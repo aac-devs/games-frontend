@@ -5,17 +5,17 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 
 import { backgroundColor, textColor } from "../../global-styles";
-import {
-  changeInputValue,
-  clearArrays,
-  setEditGame,
-  setTemporaryImage,
-  startLoadingDetailedGame,
-  startLoadingPlatformsGenres,
-  // startLoadingGenres,
-  // startLoadingPlatforms,
-  startSettingEditGame,
-} from "../../actions/main.actions";
+// import {
+//   changeInputValue,
+//   clearArrays,
+//   setEditGame,
+//   setTemporaryImage,
+//   startLoadingDetailedGame,
+//   startLoadingPlatformsGenres,
+//   // startLoadingGenres,
+//   // startLoadingPlatforms,
+//   startSettingEditGame,
+// } from "../../actions/main.actions";
 import {
   hideDatePicker,
   hideRatingPicker,
@@ -28,6 +28,12 @@ import {
   startLoadingListboxPlatforms,
 } from "../../actions/components.actions";
 import { Badge, Rating, Listbox, DateBox } from "../index";
+import {
+  changeInputValue,
+  cleanArrays,
+  setTemporaryImage,
+  startLoadingArrays,
+} from "../../actions/games.actions";
 
 const Container = styled.div`
   margin: 0 auto;
@@ -226,67 +232,52 @@ const CrudPage = () => {
   const dispatch = useDispatch();
   let params = useParams();
 
-  const main = useSelector((state) => state.main);
+  // const main = useSelector((state) => state.main);
   const { listbox, ratingPicker, datePicker } = useSelector(
     (state) => state.components
   );
+  // const {
+  //   data: { editGame: data },
+  //   currentScreen,
+  // } = main;
   const {
-    data: { editGame: data },
-    currentScreen,
-  } = main;
+    detailedGame,
+    platforms: platformsSource,
+    genres: genresSource,
+    temporaryImage,
+  } = useSelector((state) => state.games);
+
   const inputFile = useRef(null);
 
   useEffect(() => {
-    dispatch(clearArrays());
-    if (main.data.genres.length === 0) {
-      dispatch(startLoadingPlatformsGenres("genres"));
+    dispatch(cleanArrays());
+    dispatch(startLoadingArrays("genres", "games/genres"));
+    dispatch(startLoadingArrays("platforms", "games/platforms"));
+    if (params.id) {
+      dispatch(startLoadingArrays("detailedGame", `games/detail/${params.id}`));
+    } else {
     }
-    if (main.data.platforms.length === 0) {
-      dispatch(startLoadingPlatformsGenres("platforms"));
-    }
-    if (currentScreen === "create") {
-      dispatch(startSettingEditGame("new"));
-    }
-    if (currentScreen === "update") {
-      console.log("Estoy en Crud Page");
-      console.log(params.id);
-      dispatch(startLoadingDetailedGame(params.id));
-      dispatch(startSettingEditGame("edit"));
-    }
-
-    return () => {
-      dispatch(setEditGame(null));
-      dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
-      dispatch(
-        setSelectedOption({ destination: "platforms", option: "Platforms" })
-      );
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (main.data.genres.length > 0) {
+    if (detailedGame[0]?.genres.length > 0) {
       dispatch(startLoadingListboxGenres(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.genres]);
-
-  useEffect(() => {
-    if (main.data.platforms.length > 0) {
+    if (detailedGame[0]?.platforms.length > 0) {
       dispatch(startLoadingListboxPlatforms());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.platforms]);
+  }, [detailedGame[0]]);
 
   useEffect(() => {
     if (listbox.genres.selected !== "Genres") {
-      const newGenre = main.data.genres.filter(
+      const newGenre = genresSource.filter(
         (g) => g.name === listbox.genres.selected
       );
       handleInputChange({
         target: {
           name: "genres",
-          value: [...main.data.editGame.genres, ...newGenre],
+          value: [...detailedGame[0].genres, ...newGenre],
         },
       });
     }
@@ -295,22 +286,64 @@ const CrudPage = () => {
 
   useEffect(() => {
     if (listbox.platforms.selected !== "Platforms") {
-      const newPlatform = main.data.platforms.filter(
+      const newPlatform = platformsSource.filter(
         (p) => p.name === listbox.platforms.selected
       );
       handleInputChange({
         target: {
           name: "platforms",
-          value: [...main.data.editGame.platforms, ...newPlatform],
+          value: [...detailedGame[0].platforms, ...newPlatform],
         },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listbox.platforms.selected]);
 
-  if (!main.data.editGame) {
-    return <div>Espere..</div>;
+  if (!detailedGame[0]?.name) {
+    return <></>;
   }
+
+  const {
+    image,
+    name,
+    released,
+    rating,
+    description,
+    genres,
+    platforms,
+  } = detailedGame[0];
+
+  // useEffect(() => {
+  //   // dispatch(clearArrays());
+  //   if (main.data.genres.length === 0) {
+  //     // dispatch(startLoadingPlatformsGenres("genres"));
+  //   }
+  //   if (main.data.platforms.length === 0) {
+  //     // dispatch(startLoadingPlatformsGenres("platforms"));
+  //   }
+  //   if (currentScreen === "create") {
+  //     // dispatch(startSettingEditGame("new"));
+  //   }
+  //   if (currentScreen === "update") {
+  //     console.log("Estoy en Crud Page");
+  //     console.log(params.id);
+  //     // dispatch(startLoadingDetailedGame(params.id));
+  //     // dispatch(startSettingEditGame("edit"));
+  //   }
+
+  //   return () => {
+  //     // dispatch(setEditGame(null));
+  //     // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
+  //     // dispatch(
+  //     //   setSelectedOption({ destination: "platforms", option: "Platforms" })
+  //     // );
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // if (!main.data.editGame) {
+  //   return <div>Espere..</div>;
+  // }
 
   const handleImageClick = () => inputFile.current.click();
 
@@ -323,23 +356,23 @@ const CrudPage = () => {
   };
 
   const handleArrayRemoveGenre = (id) => {
-    const value = main.data.editGame.genres.filter((g) => g.id !== id);
+    const value = genres.filter((g) => g.id !== id);
     handleInputChange({ target: { name: "genres", value } });
   };
 
   const handleArrayRemovePlatform = (id) => {
-    const value = main.data.editGame.platforms.filter((p) => p.id !== id);
+    const value = platforms.filter((p) => p.id !== id);
     handleInputChange({ target: { name: "platforms", value } });
   };
 
   const handleSelectedDate = (value) => {
     handleInputChange({ target: { name: "released", value } });
-    dispatch(hideDatePicker());
+    // dispatch(hideDatePicker());
   };
 
   const handleRating = (value) => {
     handleInputChange({ target: { name: "rating", value: parseFloat(value) } });
-    dispatch(hideRatingPicker());
+    // dispatch(hideRatingPicker());
   };
 
   const handleInputChange = (e) => {
@@ -360,10 +393,10 @@ const CrudPage = () => {
       <Grid>
         <ImageSection
           image={`${
-            main.data.temporaryImage
-              ? main.data.temporaryImage
-              : main.data.editGame.image
-              ? main.data.editGame.image
+            temporaryImage
+              ? temporaryImage
+              : image
+              ? image
               : "/no-image.jpg"
           }`}
           onClick={handleImageClick}
@@ -385,7 +418,7 @@ const CrudPage = () => {
               name="name"
               onChange={handleInputChange}
               placeholder="name"
-              value={data.name}
+              value={name}
             />
           </DataName>
           <DataDescription>
@@ -394,34 +427,38 @@ const CrudPage = () => {
               maxLength={200}
               onChange={handleInputChange}
               placeholder="description"
-              value={data.description}
+              value={description}
             />
           </DataDescription>
           <DataFooter>
             <DateBox
               handleSelectedDate={handleSelectedDate}
               show={datePicker.show}
-              handleSelectedDateClose={() => dispatch(hideDatePicker())}
-              currentDate={data.released}
+              // handleSelectedDateClose={() => dispatch(hideDatePicker())}
+              currentDate={released}
             />
             <DataReleased>
               <ReleasedRatingTitle>Release date</ReleasedRatingTitle>
-              <ReleasedBody onClick={() => dispatch(showDatePicker())}>
+              <ReleasedBody
+              // onClick={() => dispatch(showDatePicker())}
+              >
                 <i className="far fa-calendar-alt"></i>
-                {dayjs(data.released).format("MMMM D, YYYY")}
+                {dayjs(released).format("MMMM D, YYYY")}
               </ReleasedBody>
             </DataReleased>
             <DataRating>
               <Rating
                 show={ratingPicker.show}
-                currentRating={data.rating}
+                currentRating={rating}
                 handleChangeRating={handleRating}
-                handleChangeRatingClose={() => dispatch(hideRatingPicker())}
+                // handleChangeRatingClose={() => dispatch(hideRatingPicker())}
               />
               <ReleasedRatingTitle>Rating</ReleasedRatingTitle>
-              <RatingBody onClick={() => dispatch(showRatingPicker())}>
+              <RatingBody
+              // onClick={() => dispatch(showRatingPicker())}
+              >
                 <i className="far fa-star"></i>
-                {data.rating}
+                {rating}
               </RatingBody>
             </DataRating>
           </DataFooter>
@@ -445,12 +482,12 @@ const CrudPage = () => {
                 left="0"
                 right="auto"
                 top="-150px"
-                exclude={main.data.editGame.genres.map((g) => g.name)}
+                exclude={genres.map((g) => g.name)}
               />
             )}
           </GenresPlatFormsLabel>
           <GenresPlatFormsContent>
-            {main.data.editGame.genres.map((genre, index) => (
+            {genres.map((genre, index) => (
               <Badge
                 key={index}
                 id={genre.id}
@@ -483,12 +520,12 @@ const CrudPage = () => {
                 left="0"
                 right="auto"
                 top="-150px"
-                exclude={main.data.editGame.platforms.map((g) => g.name)}
+                exclude={platforms.map((g) => g.name)}
               />
             )}
           </GenresPlatFormsLabel>
           <GenresPlatFormsContent>
-            {main.data.editGame.platforms.map((platform, index) => (
+            {platforms.map((platform, index) => (
               <Badge
                 key={index}
                 id={platform.id}

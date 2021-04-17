@@ -11,12 +11,21 @@ import {
   changeFilterSource,
   changeOrderBy,
   changeOrderSense,
-  resetGoSearch,
-  startLoadingGames,
-  startLoadingPlatformsGenres,
-  // startLoadingGenres,
+  cleanArrays,
+  startLoadingArrays,
   startModifyingGames,
-} from "../../actions/main.actions";
+} from "../../actions/games.actions";
+// import {
+//   changeFilterGenre,
+//   changeFilterSource,
+//   changeOrderBy,
+//   changeOrderSense,
+//   resetGoSearch,
+//   startLoadingGames,
+//   startLoadingPlatformsGenres,
+//   // startLoadingGenres,
+//   startModifyingGames,
+// } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { Card, Listbox } from "../index";
 
@@ -126,15 +135,26 @@ const PagUpDownBtn = styled.button`
 
 const MainPage = () => {
   const dispatch = useDispatch();
-  const main = useSelector((state) => state.main);
+  // const main = useSelector((state) => state.main);
   // const { loading } = useSelector((state) => state.ui);
   const { listbox } = useSelector((state) => state.components);
+  const {
+    savingGameFlag,
+    games,
+    render,
+    genres,
+    orderBy,
+    orderSense,
+    filterSource,
+    filterGenre,
+  } = useSelector((state) => state.games);
+
   const observer = useRef(
     new IntersectionObserver(
       (entries) => {
         const last = entries[entries.length - 1];
         if (last.isIntersecting) {
-          dispatch(startLoadingGames(main.nextPage));
+          dispatch(startLoadingArrays("games", "games?page="));
         }
       },
       { threshold: 1 }
@@ -153,37 +173,48 @@ const MainPage = () => {
         currentObserver.unobserve(currentElement);
       }
     };
-  }, [element, main.orderBy]);
+  }, [element, orderBy]);
 
   useEffect(() => {
-    console.log("main-page");
-    dispatch(startLoadingPlatformsGenres("genres"));
-    dispatch(startLoadingGames(1));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    console.log("loading..", main.data.savingGameFlag);
-    if (!main.data.savingGameFlag) {
-      dispatch(startLoadingGames(1));
+    console.log("----------------useEffect");
+    if (!savingGameFlag) {
+      dispatch(cleanArrays());
+      dispatch(startLoadingArrays("genres", "games/genres"));
+      dispatch(startLoadingArrays("platforms", "games/platforms"));
+      dispatch(startLoadingArrays("games", "games?page="));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.savingGameFlag]);
+  }, [savingGameFlag]);
 
   useEffect(() => {
-    if (main.data.search && main.data.searchName !== "") {
-      dispatch(startLoadingGames(1));
-      dispatch(resetGoSearch());
+    if (games.length > 0) {
+      dispatch(startModifyingGames());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.search]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [games]);
+
+  // useEffect(() => {
+  //   console.log("loading..", main.data.savingGameFlag);
+  //   if (!main.data.savingGameFlag) {
+  //     // dispatch(startLoadingGames(1));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [main.data.savingGameFlag]);
+
+  // useEffect(() => {
+  //   if (main.data.search && main.data.searchName !== "") {
+  //     // dispatch(startLoadingGames(1));
+  //     // dispatch(resetGoSearch());
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [main.data.search]);
 
   useEffect(() => {
-    if (main.data.genres.length > 0) {
+    if (genres.length > 0) {
       dispatch(startLoadingListboxGenres());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.genres]);
+  }, [genres]);
 
   useEffect(() => {
     dispatch(changeOrderBy(listbox.sorted.selected));
@@ -203,15 +234,15 @@ const MainPage = () => {
   useEffect(() => {
     dispatch(startModifyingGames());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.orderBy, main.orderSense, main.filterSource, main.filterGenre]);
+  }, [orderBy, orderSense, filterSource, filterGenre]);
 
-  useEffect(() => {
-    dispatch(startModifyingGames());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [main.data.games.original]);
+  // useEffect(() => {
+  //   // dispatch(startModifyingGames());
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [main.data.games.original]);
 
   const handleChangeOrderSense = (e) => {
-    main.orderSense === "lower-to-higher"
+    orderSense === "lower-to-higher"
       ? dispatch(changeOrderSense("higher-to-lower"))
       : dispatch(changeOrderSense("lower-to-higher"));
   };
@@ -244,15 +275,15 @@ const MainPage = () => {
                 <PagUpDownBtn onClick={handleChangeOrderSense}>
                   <i
                     className={
-                      main.orderBy === "None"
-                        ? main.orderSense === "lower-to-higher"
+                      orderBy === "None"
+                        ? orderSense === "lower-to-higher"
                           ? "fas fa-sort-amount-down-alt fa-2x"
                           : "fas fa-sort-amount-down fa-2x"
-                        : main.orderBy === "Name"
-                        ? main.orderSense === "lower-to-higher"
+                        : orderBy === "Name"
+                        ? orderSense === "lower-to-higher"
                           ? "fas fa-sort-alpha-down fa-2x"
                           : "fas fa-sort-alpha-down-alt fa-2x"
-                        : main.orderSense === "lower-to-higher"
+                        : orderSense === "lower-to-higher"
                         ? "fas fa-sort-numeric-down fa-2x"
                         : "fas fa-sort-numeric-down-alt fa-2x"
                     }
@@ -286,8 +317,7 @@ const MainPage = () => {
                 onClick={() => handleShowListbox("genres")}
                 // onClick={() => dispatch(showListbox("genres"))}
               >
-                <span>{listbox.genres.selected}</span>(
-                {main.data.games.render.length})
+                <span>{listbox.genres.selected}</span>({render.length})
                 <i className="fas fa-chevron-down"></i>
               </PagActionBtn>
               {listbox.genres.visible && listbox.parent === "main" && (
@@ -298,16 +328,12 @@ const MainPage = () => {
         </PagSection>
 
         <ListSection>
-          {main.data.games.render.length > 0 &&
-            main.data.games.render.map(
+          {render.length > 0 &&
+            render.map(
               (game, index) => (
                 // main.data.games.render.length >= 10 ? (
                 <Card
-                  setElement={
-                    main.data.games.render.length - 1 === index
-                      ? setElement
-                      : null
-                  }
+                  setElement={render.length - 1 === index ? setElement : null}
                   key={game.id}
                   // enableDelete={false}
                   enableDelete={
