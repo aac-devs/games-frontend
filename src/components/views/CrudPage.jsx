@@ -5,17 +5,6 @@ import styled from "styled-components";
 import dayjs from "dayjs";
 
 import { backgroundColor, textColor } from "../../global-styles";
-// import {
-//   changeInputValue,
-//   clearArrays,
-//   setEditGame,
-//   setTemporaryImage,
-//   startLoadingDetailedGame,
-//   startLoadingPlatformsGenres,
-//   // startLoadingGenres,
-//   // startLoadingPlatforms,
-//   startSettingEditGame,
-// } from "../../actions/main.actions";
 import {
   hideDatePicker,
   hideRatingPicker,
@@ -31,7 +20,9 @@ import { Badge, Rating, Listbox, DateBox } from "../index";
 import {
   changeInputValue,
   cleanArrays,
+  setCurrentScreen,
   setTemporaryImage,
+  startCreatingNewGame,
   startLoadingArrays,
 } from "../../actions/games.actions";
 
@@ -231,15 +222,9 @@ const PagActionBtn = styled.button`
 const CrudPage = () => {
   const dispatch = useDispatch();
   let params = useParams();
-
-  // const main = useSelector((state) => state.main);
   const { listbox, ratingPicker, datePicker } = useSelector(
     (state) => state.components
   );
-  // const {
-  //   data: { editGame: data },
-  //   currentScreen,
-  // } = main;
   const {
     detailedGame,
     platforms: platformsSource,
@@ -254,9 +239,13 @@ const CrudPage = () => {
     dispatch(startLoadingArrays("genres", "games/genres"));
     dispatch(startLoadingArrays("platforms", "games/platforms"));
     if (params.id) {
+      dispatch(setCurrentScreen("update"));
       dispatch(startLoadingArrays("detailedGame", `games/detail/${params.id}`));
     } else {
+      dispatch(setCurrentScreen("create"));
+      dispatch(startCreatingNewGame());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -270,7 +259,8 @@ const CrudPage = () => {
   }, [detailedGame[0]]);
 
   useEffect(() => {
-    if (listbox.genres.selected !== "Genres") {
+    // if (listbox.genres.selected !== "Genres") {
+    if (listbox.genres.selected !== "All") {
       const newGenre = genresSource.filter(
         (g) => g.name === listbox.genres.selected
       );
@@ -299,7 +289,7 @@ const CrudPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listbox.platforms.selected]);
 
-  if (!detailedGame[0]?.name) {
+  if (detailedGame[0]?.name === undefined) {
     return <></>;
   }
 
@@ -367,12 +357,12 @@ const CrudPage = () => {
 
   const handleSelectedDate = (value) => {
     handleInputChange({ target: { name: "released", value } });
-    // dispatch(hideDatePicker());
+    dispatch(hideDatePicker());
   };
 
   const handleRating = (value) => {
     handleInputChange({ target: { name: "rating", value: parseFloat(value) } });
-    // dispatch(hideRatingPicker());
+    dispatch(hideRatingPicker());
   };
 
   const handleInputChange = (e) => {
@@ -393,11 +383,7 @@ const CrudPage = () => {
       <Grid>
         <ImageSection
           image={`${
-            temporaryImage
-              ? temporaryImage
-              : image
-              ? image
-              : "/no-image.jpg"
+            temporaryImage ? temporaryImage : image ? image : "/no-image.jpg"
           }`}
           onClick={handleImageClick}
         >
@@ -434,14 +420,12 @@ const CrudPage = () => {
             <DateBox
               handleSelectedDate={handleSelectedDate}
               show={datePicker.show}
-              // handleSelectedDateClose={() => dispatch(hideDatePicker())}
+              handleSelectedDateClose={() => dispatch(hideDatePicker())}
               currentDate={released}
             />
             <DataReleased>
               <ReleasedRatingTitle>Release date</ReleasedRatingTitle>
-              <ReleasedBody
-              // onClick={() => dispatch(showDatePicker())}
-              >
+              <ReleasedBody onClick={() => dispatch(showDatePicker())}>
                 <i className="far fa-calendar-alt"></i>
                 {dayjs(released).format("MMMM D, YYYY")}
               </ReleasedBody>
@@ -451,12 +435,10 @@ const CrudPage = () => {
                 show={ratingPicker.show}
                 currentRating={rating}
                 handleChangeRating={handleRating}
-                // handleChangeRatingClose={() => dispatch(hideRatingPicker())}
+                handleChangeRatingClose={() => dispatch(hideRatingPicker())}
               />
               <ReleasedRatingTitle>Rating</ReleasedRatingTitle>
-              <RatingBody
-              // onClick={() => dispatch(showRatingPicker())}
-              >
+              <RatingBody onClick={() => dispatch(showRatingPicker())}>
                 <i className="far fa-star"></i>
                 {rating}
               </RatingBody>
@@ -468,7 +450,8 @@ const CrudPage = () => {
           <GenresPlatFormsLabel>
             <PagActionBtn
               theme={
-                listbox.genres.selected === "Genres" ? "primary" : "secondary"
+                // listbox.genres.selected === "Genres" ? "primary" : "secondary"
+                listbox.genres.selected === "All" ? "primary" : "secondary"
               }
               // onClick={() => dispatch(showListbox("genres"))}
               onClick={() => handleShowListbox("genres")}

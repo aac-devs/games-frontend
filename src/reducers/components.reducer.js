@@ -4,7 +4,8 @@ const initialState = {
   listbox: {
     genres: {
       list: [],
-      selected: "Genres",
+      // selected: "Genres",
+      selected: "All",
       visible: false,
     },
     platforms: {

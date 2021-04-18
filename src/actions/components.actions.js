@@ -6,11 +6,13 @@ export const startLoadingListboxGenres = (header = true) => {
     let namesArray = genres.map((item) => item.name);
     namesArray.sort();
     if (header) {
-      namesArray.unshift("Genres");
+      // namesArray.unshift("Genres");
+      namesArray.unshift("All");
     }
     dispatch(
       loadGenres({
-        selected: filterGenre || "Genres",
+        // selected: filterGenre || "Genres",
+        selected: filterGenre || "All",
         list: namesArray,
         visible: false,
       })
@@ -25,9 +27,7 @@ const loadGenres = (payload) => ({
 
 export const startLoadingListboxPlatforms = (header) => {
   return (dispatch, getState) => {
-    const {
-      platforms,
-    } = getState().games;
+    const { platforms } = getState().games;
     let namesArray = platforms.map((item) => item.name);
     namesArray.sort();
     if (header) {
@@ -83,3 +83,15 @@ export const setListboxParent = (payload) => ({
   type: types.components.listboxParent,
   payload,
 });
+
+export const resetListboxValues = () => {
+  return (dispatch) => {
+    // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
+    dispatch(setSelectedOption({ destination: "genres", option: "All" }));
+    dispatch(setSelectedOption({ destination: "source", option: "All" }));
+    dispatch(setSelectedOption({ destination: "sorted", option: "None" }));
+    dispatch(
+      setSelectedOption({ destination: "platforms", option: "Platforms" })
+    );
+  };
+};

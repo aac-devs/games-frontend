@@ -8,7 +8,10 @@ import dayjs from "dayjs";
 // } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { useParams } from "react-router-dom";
-import { startLoadingArrays } from "../../actions/games.actions";
+import {
+  setCurrentScreen,
+  startLoadingArrays,
+} from "../../actions/games.actions";
 
 const Container = styled.div`
   display: flex;
@@ -167,6 +170,11 @@ const DetailPage = () => {
   const { detailedGame } = useSelector((state) => state.games);
 
   useEffect(() => {
+    if (params.id.startsWith("own")) {
+      dispatch(setCurrentScreen("detail-own"));
+    } else {
+      dispatch(setCurrentScreen("detail"));
+    }
     dispatch(startLoadingArrays("detailedGame", `games/detail/${params.id}`));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

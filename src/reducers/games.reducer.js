@@ -8,13 +8,16 @@ const initialState = {
 
   detailedGame: [],
 
+  searchName: "",
+  search: false,
+
   nextPage: 1,
   savingGameFlag: false,
 
   orderBy: "None", // 'none' | 'name' | 'rating' | 'released'
   orderSense: "lower-to-higher", // 'up-to-down' | 'down-to-up'
   filterSource: "All", // 'all' | 'rawg' | 'custom'
-  filterGenre: "Genres", // 'none' | 'action' | ... | 'strategy'
+  filterGenre: "All", // 'All' | 'action' | ... | 'strategy'
 
   currentScreen: "", // 'home' | 'games' | 'detail' | 'create' | 'update'
   setTemporaryImage: null,
@@ -23,7 +26,6 @@ const initialState = {
 export const gamesReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.games.cleanArrays:
-      // console.log("*********************clean");
       return {
         ...state,
         games: [],
@@ -31,11 +33,13 @@ export const gamesReducer = (state = initialState, action) => {
         genres: [],
         platforms: [],
         detailedGame: [],
-
         nextPage: 1,
+        orderBy: "None",
+        orderSense: "lower-to-higher",
+        filterSource: "All",
+        filterGenre: "All",
       };
     case types.games.loadArray:
-      // console.log(action.payload);
       return {
         ...state,
         [action.payload.key]: [
@@ -93,9 +97,6 @@ export const gamesReducer = (state = initialState, action) => {
       };
 
     case types.games.changeInputValue:
-      console.log("dentro del reducer:");
-      console.log(action.payload);
-
       return {
         ...state,
         detailedGame: [
@@ -112,10 +113,40 @@ export const gamesReducer = (state = initialState, action) => {
         temporaryImage: action.payload,
       };
 
-    case types.main.resetTemporaryImage:
+    case types.games.resetTemporaryImage:
       return {
         ...state,
         temporaryImage: null,
+      };
+
+    case types.games.setCurrentScreen:
+      return {
+        ...state,
+        currentScreen: action.payload,
+      };
+
+    case types.games.changeSearchName:
+      return {
+        ...state,
+        searchName: action.payload,
+      };
+
+    case types.games.setGoSearch:
+      return {
+        ...state,
+        search: true,
+      };
+
+    case types.games.resetGoSearch:
+      return {
+        ...state,
+        search: false,
+      };
+
+    case types.games.setNewGame:
+      return {
+        ...state,
+        detailedGame: [action.payload],
       };
 
     default:

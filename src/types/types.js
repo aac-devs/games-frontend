@@ -41,6 +41,11 @@ export const types = {
     changeInputValue: "[GAMES] Change input value",
     setTemporaryImage: "[GAMES] Set temporay image",
     resetTemporaryImage: "[GAMES] Reset temporay image",
+    setCurrentScreen: "[GAMES] Set current screen",
+    changeSearchName: "[GAMES] Change search name",
+    setGoSearch: "[GAMES] Set go search",
+    resetGoSearch: "[GAMES] Reset go search",
+    setNewGame: "[GAMES] Set new game",
   },
 
   components: {
@@ -54,6 +59,7 @@ export const types = {
     hideRatingPicker: "[COMP] Hide rating picker",
     showDatePicker: "[COMP] Show date picker",
     hideDatePicker: "[COMP] Hide date picker",
+    resetListboxValues: "[COMP] Reset listbox values",
   },
 
   ui: {

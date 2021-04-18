@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { fetchingData } from "../helpers/fetch-data";
 import { uploadImage } from "../helpers/upload-image";
 import { types } from "../types/types";
@@ -10,9 +11,10 @@ export const startLoadingArrays = (key, endpoint) => {
       dispatch(removeError());
       dispatch(startLoading());
       // console.log({ endpoint });
-      const resp = await fetchingData(
-        `${endpoint}${key === "games" ? next : ""}`
-      );
+      // const resp = await fetchingData(
+      //   `${endpoint}${key === "games" ? next : ""}`
+      // );
+      const resp = await fetchingData(endpoint);
       const data = await resp.json();
       const value = data.results
         ? data.results
@@ -26,6 +28,27 @@ export const startLoadingArrays = (key, endpoint) => {
       dispatch(finishLoading());
     } catch (error) {
       console.error(`Something went wrong fetching data!`);
+    }
+  };
+};
+
+export const dataRequest = () => {
+  return (dispatch, getState) => {
+    console.log("dataRequest");
+    const { nextPage, searchName } = getState().games;
+    console.log({ nextPage });
+    console.log({ searchName });
+
+    if (nextPage === 1) {
+      dispatch(startLoadingArrays("genres", "games/genres"));
+      dispatch(startLoadingArrays("platforms", "games/platforms"));
+    }
+    if (searchName === "") {
+      dispatch(startLoadingArrays("games", `games?page=${nextPage}`));
+    } else {
+      dispatch(
+        startLoadingArrays("games", `games?name=${searchName}&page=${nextPage}`)
+      );
     }
   };
 };
@@ -87,7 +110,8 @@ export const startModifyingGames = () => {
         ? games.filter((g) => g.id.toString().startsWith("own"))
         : [...games];
 
-    if (filterGenre !== "Genres") {
+    // if (filterGenre !== "Genres") {
+    if (filterGenre !== "All") {
       array = array.filter((item) => {
         const genres = item.genres.map((g) => g.name.toLowerCase());
         return genres.includes(filterGenre.toLowerCase()) ? item : null;
@@ -195,23 +219,12 @@ export const startSavingGame = () => {
       dispatch(removeError());
       dispatch(startLoading());
       dispatch(enableSavingGameFlag());
-
-      //TODO: Problema al poner la imagen en editGame
       const file = getState().games.temporaryImage;
-
-      console.log({ file });
-
       if (file) {
         const imageUrl = await uploadImage(file);
-        console.log({ imageUrl });
         dispatch(changeInputValue({ name: "image", value: imageUrl }));
       }
       const { id: gameId, ...data } = getState().games.detailedGame[0];
-      // const games = getState().games;
-
-      console.log({ gameId });
-      console.log({ data });
-
       const method = gameId ? "PUT" : "POST";
       const endpoint = gameId ? `games/edit/${gameId}` : "games/create";
       const resp = await fetchingData(endpoint, data, method);
@@ -241,3 +254,42 @@ export const startSavingGame = () => {
     }
   };
 };
+
+export const setCurrentScreen = (payload) => ({
+  type: types.games.setCurrentScreen,
+  payload,
+});
+
+export const changeSearchName = (payload) => ({
+  type: types.games.changeSearchName,
+  payload,
+});
+
+export const setGoSearch = () => ({
+  type: types.games.setGoSearch,
+});
+
+export const resetGoSearch = () => ({
+  type: types.games.resetGoSearch,
+});
+
+export const startCreatingNewGame = () => {
+  return (dispatch, getState) => {
+    dispatch(
+      setNewGame({
+        name: "",
+        description: "",
+        image: "",
+        released: dayjs(),
+        rating: 3,
+        genres: [],
+        platforms: [],
+      })
+    );
+  };
+};
+
+export const setNewGame = (payload) => ({
+  type: types.games.setNewGame,
+  payload,
+});

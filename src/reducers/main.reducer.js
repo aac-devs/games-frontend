@@ -25,7 +25,8 @@ const initialState = {
   orderBy: "None", // 'none' | 'name' | 'rating' | 'released'
   orderSense: "lower-to-higher", // 'up-to-down' | 'down-to-up'
   filterSource: "All", // 'all' | 'rawg' | 'custom'
-  filterGenre: "Genres", // 'none' | 'action' | ... | 'strategy'
+  // filterGenre: "Genres", // 'none' | 'action' | ... | 'strategy'
+  filterGenre: "All", // 'none' | 'action' | ... | 'strategy'
   currentScreen: "", // 'home' | 'games' | 'detail' | 'create' | 'update'
 };
 

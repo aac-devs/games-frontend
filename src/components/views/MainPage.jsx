@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
+  resetListboxValues,
   setListboxParent,
   showListbox,
   startLoadingListboxGenres,
@@ -12,20 +13,14 @@ import {
   changeOrderBy,
   changeOrderSense,
   cleanArrays,
-  startLoadingArrays,
+  // cleanArrays,
+  dataRequest,
+  resetGoSearch,
+  // resetGoSearch,
+  setCurrentScreen,
+  // startLoadingArrays,
   startModifyingGames,
 } from "../../actions/games.actions";
-// import {
-//   changeFilterGenre,
-//   changeFilterSource,
-//   changeOrderBy,
-//   changeOrderSense,
-//   resetGoSearch,
-//   startLoadingGames,
-//   startLoadingPlatformsGenres,
-//   // startLoadingGenres,
-//   startModifyingGames,
-// } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { Card, Listbox } from "../index";
 
@@ -147,6 +142,8 @@ const MainPage = () => {
     orderSense,
     filterSource,
     filterGenre,
+    searchName,
+    search,
   } = useSelector((state) => state.games);
 
   const observer = useRef(
@@ -154,7 +151,17 @@ const MainPage = () => {
       (entries) => {
         const last = entries[entries.length - 1];
         if (last.isIntersecting) {
-          dispatch(startLoadingArrays("games", "games?page="));
+          dispatch(dataRequest());
+          // console.log(searchName);
+          // if (searchName !== "") {
+          //   console.log("buscar=", searchName);
+          //   dispatch(
+          //     startLoadingArrays("games", `games?name=${searchName}&page=`)
+          //   );
+          // } else {
+          //   console.log("petición normal");
+          //   dispatch(startLoadingArrays("games", "games?page="));
+          // }
         }
       },
       { threshold: 1 }
@@ -177,37 +184,35 @@ const MainPage = () => {
 
   useEffect(() => {
     console.log("----------------useEffect");
+    dispatch(setCurrentScreen("games"));
     if (!savingGameFlag) {
+      dispatch(resetListboxValues());
       dispatch(cleanArrays());
-      dispatch(startLoadingArrays("genres", "games/genres"));
-      dispatch(startLoadingArrays("platforms", "games/platforms"));
-      dispatch(startLoadingArrays("games", "games?page="));
+      dispatch(dataRequest());
+      // dispatch(startLoadingArrays("genres", "games/genres"));
+      // dispatch(startLoadingArrays("platforms", "games/platforms"));
+      // dispatch(startLoadingArrays("games", "games?page="));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savingGameFlag]);
 
   useEffect(() => {
     if (games.length > 0) {
       dispatch(startModifyingGames());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [games]);
 
-  // useEffect(() => {
-  //   console.log("loading..", main.data.savingGameFlag);
-  //   if (!main.data.savingGameFlag) {
-  //     // dispatch(startLoadingGames(1));
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [main.data.savingGameFlag]);
-
-  // useEffect(() => {
-  //   if (main.data.search && main.data.searchName !== "") {
-  //     // dispatch(startLoadingGames(1));
-  //     // dispatch(resetGoSearch());
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [main.data.search]);
+  useEffect(() => {
+    if (search && searchName !== "") {
+      dispatch(cleanArrays());
+      dispatch(dataRequest());
+      // dispatch(startLoadingGames(1));
+      // dispatch(startLoadingArrays("games", `games?name=${searchName}&page=`));
+      dispatch(resetGoSearch());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   useEffect(() => {
     if (genres.length > 0) {
@@ -267,6 +272,8 @@ const MainPage = () => {
                     Order by:&nbsp;&nbsp;
                     <strong>{listbox.sorted.selected}</strong>
                   </span>
+                  {/* &nbsp; ({render.length})&nbsp; */}
+                  &nbsp;&nbsp;
                   <i className="fas fa-chevron-down"></i>
                 </PagActionBtn>
                 {listbox.sorted.visible && listbox.parent === "main" && (
@@ -300,7 +307,11 @@ const MainPage = () => {
                 onClick={() => handleShowListbox("source")}
                 // onClick={() => dispatch(showListbox("source"))}
               >
-                {listbox.source.selected}
+                <span>
+                  Source:&nbsp;&nbsp;
+                  <strong>{listbox.source.selected}</strong>
+                </span>
+                &nbsp; ({render.length}){/* {listbox.source.selected} */}
                 &nbsp;&nbsp;&nbsp;
                 <i className="fas fa-chevron-down"></i>
               </PagActionBtn>
@@ -312,13 +323,20 @@ const MainPage = () => {
             <PagActionsSection>
               <PagActionBtn
                 theme={
-                  listbox.genres.selected === "Genres" ? "primary" : "secondary"
+                  // listbox.genres.selected === "Genres" ? "primary" : "secondary"
+                  listbox.genres.selected === "All" ? "primary" : "secondary"
                 }
                 onClick={() => handleShowListbox("genres")}
                 // onClick={() => dispatch(showListbox("genres"))}
               >
-                <span>{listbox.genres.selected}</span>({render.length})
+                <span>
+                  Genres:&nbsp;&nbsp;
+                  <strong>{listbox.genres.selected}</strong>
+                </span>
+                &nbsp; ({render.length})&nbsp;&nbsp;&nbsp;
                 <i className="fas fa-chevron-down"></i>
+                {/* <span>{listbox.genres.selected}</span>({render.length})
+                <i className="fas fa-chevron-down"></i> */}
               </PagActionBtn>
               {listbox.genres.visible && listbox.parent === "main" && (
                 <Listbox listName="genres" left="0" right="auto" />
