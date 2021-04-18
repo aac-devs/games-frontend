@@ -1,6 +1,5 @@
 import { Route, Switch, HashRouter as Router } from "react-router-dom";
 import styled from "styled-components";
-import { backgroundColor } from "../global-styles";
 import { useSelector } from "react-redux";
 import {
   DetailPage,
@@ -9,6 +8,7 @@ import {
   CrudPage,
   Navbar,
   Loading,
+  Footer,
 } from "../components";
 
 const AppRouterContainer = styled.div`
@@ -19,9 +19,7 @@ const AppRouterContainer = styled.div`
     position: fixed;
     top: 0;
     width: 100%;
-    /* background-color: ${backgroundColor.primary.normal}; */
     background-color: rgba(0, 0, 0, 0.7);
-    /* opacity: 0.9; */
     z-index: 101;
   }
   .main {
@@ -32,8 +30,11 @@ const AppRouterContainer = styled.div`
     }
   }
   .footer {
-    background-color: ${backgroundColor.primary.normal};
+    background-color: rgba(0, 0, 0, 0.7);
     opacity: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
@@ -55,7 +56,9 @@ export const AppRouter = () => {
             <Route exact path="/games/create" component={CrudPage} />
           </Switch>
         </main>
-        <footer className="footer"></footer>
+        <footer className="footer">
+          <Footer />
+        </footer>
       </Router>
     </AppRouterContainer>
   );

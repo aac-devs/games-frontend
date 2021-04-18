@@ -6,12 +6,10 @@ export const startLoadingListboxGenres = (header = true) => {
     let namesArray = genres.map((item) => item.name);
     namesArray.sort();
     if (header) {
-      // namesArray.unshift("Genres");
       namesArray.unshift("All");
     }
     dispatch(
       loadGenres({
-        // selected: filterGenre || "Genres",
         selected: filterGenre || "All",
         list: namesArray,
         visible: false,
@@ -19,11 +17,6 @@ export const startLoadingListboxGenres = (header = true) => {
     );
   };
 };
-
-const loadGenres = (payload) => ({
-  type: types.components.loadGenresNames,
-  payload,
-});
 
 export const startLoadingListboxPlatforms = (header) => {
   return (dispatch, getState) => {
@@ -42,6 +35,22 @@ export const startLoadingListboxPlatforms = (header) => {
     );
   };
 };
+
+export const resetListboxValues = () => {
+  return (dispatch) => {
+    dispatch(setSelectedOption({ destination: "genres", option: "All" }));
+    dispatch(setSelectedOption({ destination: "source", option: "All" }));
+    dispatch(setSelectedOption({ destination: "sorted", option: "None" }));
+    dispatch(
+      setSelectedOption({ destination: "platforms", option: "Platforms" })
+    );
+  };
+};
+
+const loadGenres = (payload) => ({
+  type: types.components.loadGenresNames,
+  payload,
+});
 
 const loadPlatforms = (payload) => ({
   type: types.components.loadPlatformsNames,
@@ -83,15 +92,3 @@ export const setListboxParent = (payload) => ({
   type: types.components.listboxParent,
   payload,
 });
-
-export const resetListboxValues = () => {
-  return (dispatch) => {
-    // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
-    dispatch(setSelectedOption({ destination: "genres", option: "All" }));
-    dispatch(setSelectedOption({ destination: "source", option: "All" }));
-    dispatch(setSelectedOption({ destination: "sorted", option: "None" }));
-    dispatch(
-      setSelectedOption({ destination: "platforms", option: "Platforms" })
-    );
-  };
-};

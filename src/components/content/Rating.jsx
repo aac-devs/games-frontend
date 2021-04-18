@@ -17,13 +17,13 @@ const Container = styled.div`
   visibility: ${(props) => (props.show ? "visible" : "hidden")};
   position: absolute;
   top: -5px;
-  right: -40px;
+  right: -10px;
   background-color: #fff;
   z-index: 10;
   border-radius: 6px;
   padding: 20px 24px;
   width: 180px;
-  @media (max-width: 979px) {
+  @media (max-width: 768px) {
     position: fixed;
     left: 10px;
     bottom: 10px;
@@ -53,7 +53,7 @@ const SaveButton = styled.div`
 
 const Body = styled.div`
   margin-top: 12px;
-  @media (max-width: 979px) {
+  @media (max-width: 768px) {
     margin-top: 6px;
     flex-direction: column;
   }

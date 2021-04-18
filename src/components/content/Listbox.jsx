@@ -8,7 +8,6 @@ import {
 import { BackScreen } from "../../global-styles";
 
 const Container = styled.div`
-  /* position: ${(props) => props.position}; */
   position: absolute;
   top: ${(props) => props.top};
   left: ${(props) => props.left};
@@ -19,8 +18,9 @@ const Container = styled.div`
   padding: 5px 10px;
   border-radius: 5px;
   z-index: 1000;
-  overflow-y: auto;
+  overflow-y: scroll;
   @media (max-width: 768px) {
+    font-size: 24px;
     height: max-content;
     display: flex;
     flex-direction: column;
@@ -43,6 +43,9 @@ const Container = styled.div`
     align-items: center;
     cursor: pointer;
     transition: all 0.3s;
+    @media (max-width: 768px) {
+      height: 32px;
+    }
     &:hover {
       background-color: #ddd;
     }
@@ -52,7 +55,6 @@ const Container = styled.div`
   }
 `;
 
-// TODO: cargar videogames.search.filtering con el valor cambiado.
 const Listbox = ({
   listName,
   width = "220px",
@@ -64,13 +66,11 @@ const Listbox = ({
   const dispatch = useDispatch();
   const { listbox } = useSelector((state) => state.components);
   const [back, setBack] = useState(true);
-
   const handleOptionChange = (e) => {
     const value = e.target.id;
     dispatch(setSelectedOption({ destination: listName, option: value }));
     dispatch(hideListbox(listName));
   };
-
   const handleBackScreenClick = (e) => {
     e.stopPropagation();
     dispatch(hideListbox(listName));

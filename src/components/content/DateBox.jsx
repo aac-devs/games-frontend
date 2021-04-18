@@ -8,7 +8,6 @@ const BackgroundDateSelected = styled.div`
   background-color: black;
   filter: brightness(50%);
   opacity: 0.4;
-
   position: fixed;
   top: 0;
   left: 0;
@@ -26,8 +25,7 @@ const Container = styled.div`
   border-radius: 6px;
   padding: 20px 24px;
   width: 400px;
-
-  @media (max-width: 979px) {
+  @media (max-width: 768px) {
     position: fixed;
     left: 10px;
     bottom: 10px;
@@ -36,14 +34,17 @@ const Container = styled.div`
     width: calc(100vw - 20px);
   }
 `;
+
 const Header = styled.div`
   display: flex;
 `;
+
 const Title = styled.div`
   flex: 1 1 auto;
   font-size: 16px;
   color: rgba(0, 0, 0, 0.5);
 `;
+
 const SaveButton = styled.div`
   flex: 0 0 auto;
   margin-left: 10px;
@@ -53,15 +54,17 @@ const SaveButton = styled.div`
   opacity: 0.5;
   transition: opacity 0.3s;
 `;
+
 const Body = styled.div`
   margin-top: 12px;
   display: flex;
   justify-content: space-between;
-  @media (max-width: 979px) {
+  @media (max-width: 768px) {
     margin-top: 6px;
     flex-direction: column;
   }
 `;
+
 const CustomSelect = styled.select`
   padding: 8px 12px;
   color: #262626;
@@ -70,15 +73,14 @@ const CustomSelect = styled.select`
   background-color: #fff;
   overflow: visible;
   width: ${(props) => props.customWidth};
-
-  @media (max-width: 979px) {
+  @media (max-width: 768px) {
     margin-top: 6px;
     font-size: 14px;
     width: 100%;
   }
   option {
     padding: 0 2px 1px;
-    @media (max-width: 979px) {
+    @media (max-width: 768px) {
       font-size: 14px;
     }
   }

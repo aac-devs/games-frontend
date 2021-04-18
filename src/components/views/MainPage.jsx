@@ -13,12 +13,9 @@ import {
   changeOrderBy,
   changeOrderSense,
   cleanArrays,
-  // cleanArrays,
   dataRequest,
   resetGoSearch,
-  // resetGoSearch,
   setCurrentScreen,
-  // startLoadingArrays,
   startModifyingGames,
 } from "../../actions/games.actions";
 import { backgroundColor, textColor } from "../../global-styles";
@@ -130,8 +127,6 @@ const PagUpDownBtn = styled.button`
 
 const MainPage = () => {
   const dispatch = useDispatch();
-  // const main = useSelector((state) => state.main);
-  // const { loading } = useSelector((state) => state.ui);
   const { listbox } = useSelector((state) => state.components);
   const {
     savingGameFlag,
@@ -152,16 +147,6 @@ const MainPage = () => {
         const last = entries[entries.length - 1];
         if (last.isIntersecting) {
           dispatch(dataRequest());
-          // console.log(searchName);
-          // if (searchName !== "") {
-          //   console.log("buscar=", searchName);
-          //   dispatch(
-          //     startLoadingArrays("games", `games?name=${searchName}&page=`)
-          //   );
-          // } else {
-          //   console.log("petición normal");
-          //   dispatch(startLoadingArrays("games", "games?page="));
-          // }
         }
       },
       { threshold: 1 }
@@ -183,15 +168,11 @@ const MainPage = () => {
   }, [element, orderBy]);
 
   useEffect(() => {
-    console.log("----------------useEffect");
     dispatch(setCurrentScreen("games"));
     if (!savingGameFlag) {
       dispatch(resetListboxValues());
       dispatch(cleanArrays());
       dispatch(dataRequest());
-      // dispatch(startLoadingArrays("genres", "games/genres"));
-      // dispatch(startLoadingArrays("platforms", "games/platforms"));
-      // dispatch(startLoadingArrays("games", "games?page="));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savingGameFlag]);
@@ -207,8 +188,6 @@ const MainPage = () => {
     if (search && searchName !== "") {
       dispatch(cleanArrays());
       dispatch(dataRequest());
-      // dispatch(startLoadingGames(1));
-      // dispatch(startLoadingArrays("games", `games?name=${searchName}&page=`));
       dispatch(resetGoSearch());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -241,11 +220,6 @@ const MainPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy, orderSense, filterSource, filterGenre]);
 
-  // useEffect(() => {
-  //   // dispatch(startModifyingGames());
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [main.data.games.original]);
-
   const handleChangeOrderSense = (e) => {
     orderSense === "lower-to-higher"
       ? dispatch(changeOrderSense("higher-to-lower"))
@@ -272,7 +246,6 @@ const MainPage = () => {
                     Order by:&nbsp;&nbsp;
                     <strong>{listbox.sorted.selected}</strong>
                   </span>
-                  {/* &nbsp; ({render.length})&nbsp; */}
                   &nbsp;&nbsp;
                   <i className="fas fa-chevron-down"></i>
                 </PagActionBtn>
@@ -305,14 +278,12 @@ const MainPage = () => {
                   listbox.source.selected === "All" ? "primary" : "secondary"
                 }
                 onClick={() => handleShowListbox("source")}
-                // onClick={() => dispatch(showListbox("source"))}
               >
                 <span>
                   Source:&nbsp;&nbsp;
                   <strong>{listbox.source.selected}</strong>
                 </span>
-                &nbsp; ({render.length}){/* {listbox.source.selected} */}
-                &nbsp;&nbsp;&nbsp;
+                &nbsp; ({render.length}) &nbsp;&nbsp;&nbsp;
                 <i className="fas fa-chevron-down"></i>
               </PagActionBtn>
               {listbox.source.visible && listbox.parent === "main" && (
@@ -323,11 +294,9 @@ const MainPage = () => {
             <PagActionsSection>
               <PagActionBtn
                 theme={
-                  // listbox.genres.selected === "Genres" ? "primary" : "secondary"
                   listbox.genres.selected === "All" ? "primary" : "secondary"
                 }
                 onClick={() => handleShowListbox("genres")}
-                // onClick={() => dispatch(showListbox("genres"))}
               >
                 <span>
                   Genres:&nbsp;&nbsp;
@@ -335,8 +304,6 @@ const MainPage = () => {
                 </span>
                 &nbsp; ({render.length})&nbsp;&nbsp;&nbsp;
                 <i className="fas fa-chevron-down"></i>
-                {/* <span>{listbox.genres.selected}</span>({render.length})
-                <i className="fas fa-chevron-down"></i> */}
               </PagActionBtn>
               {listbox.genres.visible && listbox.parent === "main" && (
                 <Listbox listName="genres" left="0" right="auto" />
@@ -347,29 +314,16 @@ const MainPage = () => {
 
         <ListSection>
           {render.length > 0 &&
-            render.map(
-              (game, index) => (
-                // main.data.games.render.length >= 10 ? (
-                <Card
-                  setElement={render.length - 1 === index ? setElement : null}
-                  key={game.id}
-                  // enableDelete={false}
-                  enableDelete={
-                    game.id.toString().startsWith("own") ? true : false
-                  }
-                  {...game}
-                />
-              )
-              // ) : (
-              // <Card
-              //   key={game.id}
-              //   enableDelete={
-              //     game.id.toString().startsWith("own") ? true : false
-              //   }
-              //   {...game}
-              // />
-              // )
-            )}
+            render.map((game, index) => (
+              <Card
+                setElement={render.length - 1 === index ? setElement : null}
+                key={game.id}
+                enableDelete={
+                  game.id.toString().startsWith("own") ? true : false
+                }
+                {...game}
+              />
+            ))}
         </ListSection>
       </MainSection>
     </Container>

@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { setCurrentScreen } from "../../actions/games.actions";
-// import { clearArrays, setCurrentScreen } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 
 const Background = styled.div`
@@ -53,7 +52,6 @@ const HomePage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(clearArrays());
     dispatch(setCurrentScreen("home"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,12 +64,7 @@ const HomePage = () => {
       }}
     >
       <Background className="art art_colored">
-        <Title
-          // onClick={() => dispatch(setCurrentScreen("games"))}
-          to="/games"
-        >
-          aac-videogames
-        </Title>
+        <Title to="/games">aac-videogames</Title>
       </Background>
     </div>
   );

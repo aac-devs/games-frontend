@@ -28,7 +28,6 @@ export const textColor = {
 
 export const BackScreen = styled.div`
   background-color: rgba(0, 0, 0, 0.8);
-  /* background-color: rgba(255, 0, 0); */
   position: fixed;
   top: 0;
   left: 0;
@@ -55,8 +54,6 @@ body, html {
   font-family: 'Roboto', sans-serif, Helvetica, Arial;
   background-attachment: fixed;
   background-color: ${backgroundColor.primary.dark};
-  /* background-color: lime; */
-
 }
 
 #root{
@@ -71,7 +68,6 @@ body, html {
 @media (max-width: 768px) {
   .nav-menu-visible {
     background-color: blue;
-    /* left: 250px; */
     right: 0;
   }
   .nav-menu-invisible {
@@ -79,5 +75,4 @@ body, html {
     right: -250px;
   }
 }
-
 `;

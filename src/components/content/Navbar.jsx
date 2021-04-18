@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {
   setListboxParent,
-  setSelectedOption,
   showListbox,
 } from "../../actions/components.actions";
 import {
@@ -14,14 +13,6 @@ import {
   setGoSearch,
   startSavingGame,
 } from "../../actions/games.actions";
-// import {
-//   changeSearchName,
-//   clearArrays,
-//   setCurrentScreen,
-//   setGoSearch,
-//   startLoadingGames,
-//   startSavingGame,
-// } from "../../actions/main.actions";
 import { backgroundColor, BackScreen, textColor } from "../../global-styles";
 import { Listbox } from "../index";
 
@@ -31,7 +22,6 @@ const SearchSection = styled.div`
     props.focused ? "#fff" : `${backgroundColor.primary.light}`};
   margin: 0 10px;
   max-width: 500px;
-
   flex-grow: 1;
   height: 35px;
   border-radius: 20px;
@@ -89,10 +79,9 @@ const CustomLink = styled(Link)`
   color: ${textColor.secondary.normal};
 `;
 
-const NavLogo = styled.div`
-  color: ${(props) => (props.enabled ? "#484848" : textColor.secondary.normal)};
+const NavLogo = styled(CustomLink)`
+  color: ${textColor.secondary.normal};
   text-shadow: 3px 3px 3px #000;
-
   padding: 0;
   font-size: 30px;
   font-family: "Poppins", sans-serif;
@@ -111,8 +100,6 @@ const NavUl = styled.ul`
   position: relative;
   align-items: center;
   overflow-y: visible;
-  /* background-color: #fff; */
-
   @media (max-width: 768px) {
     position: fixed;
     top: 60px;
@@ -203,7 +190,6 @@ const ToggleButton = styled.button`
   outline: none;
   width: 38px;
   min-width: 38px;
-
   @media (max-width: 768px) {
     display: block;
   }
@@ -213,11 +199,9 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const { currentScreen, detailedGame } = useSelector((state) => state.games);
   const { listbox } = useSelector((state) => state.components);
-
   const [toggle, setToggle] = useState(false);
   const [focused, setFocused] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-
   const searchInput = useRef();
 
   useEffect(() => {
@@ -230,24 +214,14 @@ const Navbar = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   if (!backScreen) {
-  //     console.log("toggle => false");
-  //     setToggle(false);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [backScreen]);
-
   const handleSearchGame = (e) => {
     e.preventDefault();
     dispatch(changeSearchName(searchValue));
     dispatch(setGoSearch());
   };
+
   const handleSearchClick = (e) => {
     setFocused(true);
-    // setToggle(false);
-    // handleToggleButton();
   };
 
   const handleChangeSearchName = (e) => {
@@ -262,31 +236,8 @@ const Navbar = () => {
   };
 
   const handleSaveGame = (e) => {
-    console.log("handleSaveGame");
-
     //TODO: Validar campos:
-    // dispatch(clearArrays());
     dispatch(startSavingGame());
-    // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
-    // dispatch(
-    // setSelectedOption({ destination: "platforms", option: "Platforms" })
-    // );
-    console.log("nav-bar");
-  };
-
-  // const handleHideToggle = () => {
-  //   setToggle(false);
-  // };
-
-  const setNextScreen = (value) => {
-    console.log("setNextScreen");
-
-    // (value === "home" || value === "games" || value === "create") &&
-    // dispatch(setCurrentScreen(value));
-    // (value === "cancel" || value === "save") &&
-    // dispatch(setCurrentScreen("games"));
-    value === "save" && handleSaveGame();
-    // value === "update" && dispatch(setCurrentScreen("update"));
     setToggle(false);
   };
 
@@ -304,8 +255,7 @@ const Navbar = () => {
     <>
       {toggle && <BackScreen onClick={handleToggleButton} />}
       <Container>
-        <NavLogo enabled={toggle}>aac-devs</NavLogo>
-
+        <NavLogo to="/">aac-devs</NavLogo>
         {currentScreen === "games" && (
           <SearchSection focused={focused}>
             <form onSubmit={handleSearchGame}>
@@ -325,7 +275,6 @@ const Navbar = () => {
             </form>
           </SearchSection>
         )}
-        {/* <ToggleButton onClick={() => setToggle(!toggle)}> */}
         <ToggleButton onClick={handleToggleButton}>
           {!toggle ? (
             <i className="fas fa-bars"></i>
@@ -337,24 +286,24 @@ const Navbar = () => {
           className={`${toggle ? "nav-menu-visible" : "nav-menu-invisible"}`}
         >
           {currentScreen !== "home" && (
-            <NavLi onClick={(e) => setNextScreen("home")} to="/">
+            <NavLi onClick={() => setToggle(false)} to="/">
               home
             </NavLi>
           )}
           {currentScreen !== "games" && (
-            <NavLi onClick={(e) => setNextScreen("games")} to="/games">
+            <NavLi onClick={() => setToggle(false)} to="/games">
               games
             </NavLi>
           )}
 
           {currentScreen !== "create" && currentScreen !== "update" && (
-            <NavLi onClick={(e) => setNextScreen("create")} to="/games/create">
+            <NavLi onClick={() => setToggle(false)} to="/games/create">
               new
             </NavLi>
           )}
           {currentScreen === "detail-own" && (
             <NavLi
-              onClick={(e) => setNextScreen("update")}
+              onClick={() => setToggle(false)}
               to={`/games/update/${detailedGame[0]?.id}`}
             >
               edit
@@ -378,10 +327,10 @@ const Navbar = () => {
           {(currentScreen === "create" || currentScreen === "update") && (
             <>
               {toggle && <hr />}
-              <NavLi onClick={(e) => setNextScreen("save")} to="/games">
+              <NavLi onClick={handleSaveGame} to="/games">
                 save
               </NavLi>
-              <NavLi onClick={(e) => setNextScreen("cancel")} to="/games">
+              <NavLi onClick={() => setToggle(false)} to="/games">
                 cancel
               </NavLi>
             </>

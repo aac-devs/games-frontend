@@ -1,22 +1,9 @@
-/*
-Tamaños:
-- celular: ancho: 300px - 420px, alto: 80px,
-  SP: 635
-- tablet:  ancho: 350px - 470px, alto: 400px,
-  SP: 1100
-- desktop: ancho: 400px - 520px, alto: 350px,
-*/
-
 import dayjs from "dayjs";
 import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-// import {
-//   setCurrentScreen,
-//   startDeletingGame,
-//   unloadDetailedGame,
-// } from "../../actions/main.actions";
+import { startDeletingGame } from "../../actions/games.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 
 const Container = styled.div`
@@ -83,22 +70,18 @@ const SpanLink = styled(Link)`
   cursor: pointer;
   color: ${textColor.primary.light};
   text-decoration: none;
-  /* background-color: red; */
 `;
 
 const Released = styled.div`
   grid-area: rls;
   flex-grow: 1;
-  /* width: 85%; */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  /* background-color: thistle; */
   padding: 0 10px;
   h5 {
     font-size: 12px;
-    /* margin-bottom: 5px; */
     font-weight: 400;
     color: ${backgroundColor.primary.light};
     margin-right: 10px;
@@ -117,21 +100,15 @@ const Released = styled.div`
 `;
 const Rating = styled.div`
   grid-area: rtg;
-
   width: 100%;
   display: flex;
   padding-right: 10px;
-  /* flex-direction: column; */
   align-items: center;
   justify-content: flex-end;
-  /* background-color: dodgerblue; */
   h5 {
     font-size: 12px;
-    /* margin-bottom: 5px; */
     font-weight: 400;
     color: ${backgroundColor.primary.light};
-    /* color: ${textColor.primary.dark}; */
-    /* background-color: gray; */
     margin-right: 10px;
   }
   span {
@@ -142,15 +119,11 @@ const Rating = styled.div`
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     background-image: ${(props) => props.ratingColor};
     color: ${textColor.primary.light};
-    /* background-color: yellow; */
   }
 `;
 const Genres = styled.div`
   grid-area: gnr;
-
   padding: 0 10px;
-  /* background-color: lime; */
-
   h5 {
     color: ${backgroundColor.primary.light};
     font-size: 12px;
@@ -162,7 +135,6 @@ const Genres = styled.div`
 const GenresTags = styled.div`
   display: flex;
   flex-wrap: wrap;
-  /* overflow-x: visible; */
   span {
     margin: 0 10px 7px 0;
     font-size: 14px;
@@ -183,14 +155,10 @@ const DeleteButton = styled.button`
   bottom: 7px;
   right: 7px;
   border-radius: 50%;
-  /* background-color: ${backgroundColor.secondary.normal}; */
   background-color: #e91e63;
   filter: brightness(90%);
-
   border: none;
-  /* box-shadow: 0px 0px 7px rgba(128, 128, 128, 0.9); */
   box-shadow: 0 0 5px ${color}, 0 0 10px ${color}, 0 0 20px ${color};
-  /* 0 0 60px ${color}, 0 0 80px ${color}, 0 0 100px ${color}; */
   color: white;
   padding: 10px 11px;
   transition: all 0.2s;
@@ -198,9 +166,7 @@ const DeleteButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   &:hover {
-    /* background-color: ${backgroundColor.secondary.light}; */
     background-color: #ff6291;
-
     transform: scale(1.04);
   }
 `;
@@ -210,7 +176,7 @@ const Card = memo(
     const dispatch = useDispatch();
     const handleDeleteGame = (e) => {
       e.stopPropagation();
-      // dispatch(startDeletingGame(id));
+      dispatch(startDeletingGame(id));
     };
     const ratingColor =
       rating >= 4.5
@@ -219,29 +185,13 @@ const Card = memo(
         ? "linear-gradient(180deg, #649bff, #4354b9)"
         : "linear-gradient(180deg, #ff5764, #f11a2a)";
 
-    const handleClearDetailedGame = () => {
-      console.log("clear detailed");
-      if (id.toString().startsWith("own")) {
-        // dispatch(setCurrentScreen("detail-own"));
-      } else {
-        // dispatch(setCurrentScreen("detail"));
-      }
-
-      // dispatch(unloadDetailedGame());
-    };
-
     return (
       <Container ref={setElement}>
         <ImageSection>
           <img src={image} alt="ima" />
         </ImageSection>
         <Title>
-          <SpanLink
-            onClick={handleClearDetailedGame}
-            to={`/games/detail/${id}`}
-          >
-            {name}
-          </SpanLink>
+          <SpanLink to={`/games/detail/${id}`}>{name}</SpanLink>
         </Title>
         <Released>
           <h5>Released</h5>

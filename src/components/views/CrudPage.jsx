@@ -9,12 +9,9 @@ import {
   hideDatePicker,
   hideRatingPicker,
   setListboxParent,
-  setSelectedOption,
   showDatePicker,
   showListbox,
   showRatingPicker,
-  startLoadingListboxGenres,
-  startLoadingListboxPlatforms,
 } from "../../actions/components.actions";
 import { Badge, Rating, Listbox, DateBox } from "../index";
 import {
@@ -249,17 +246,6 @@ const CrudPage = () => {
   }, []);
 
   useEffect(() => {
-    if (detailedGame[0]?.genres.length > 0) {
-      dispatch(startLoadingListboxGenres(false));
-    }
-    if (detailedGame[0]?.platforms.length > 0) {
-      dispatch(startLoadingListboxPlatforms());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detailedGame[0]]);
-
-  useEffect(() => {
-    // if (listbox.genres.selected !== "Genres") {
     if (listbox.genres.selected !== "All") {
       const newGenre = genresSource.filter(
         (g) => g.name === listbox.genres.selected
@@ -303,38 +289,6 @@ const CrudPage = () => {
     platforms,
   } = detailedGame[0];
 
-  // useEffect(() => {
-  //   // dispatch(clearArrays());
-  //   if (main.data.genres.length === 0) {
-  //     // dispatch(startLoadingPlatformsGenres("genres"));
-  //   }
-  //   if (main.data.platforms.length === 0) {
-  //     // dispatch(startLoadingPlatformsGenres("platforms"));
-  //   }
-  //   if (currentScreen === "create") {
-  //     // dispatch(startSettingEditGame("new"));
-  //   }
-  //   if (currentScreen === "update") {
-  //     console.log("Estoy en Crud Page");
-  //     console.log(params.id);
-  //     // dispatch(startLoadingDetailedGame(params.id));
-  //     // dispatch(startSettingEditGame("edit"));
-  //   }
-
-  //   return () => {
-  //     // dispatch(setEditGame(null));
-  //     // dispatch(setSelectedOption({ destination: "genres", option: "Genres" }));
-  //     // dispatch(
-  //     //   setSelectedOption({ destination: "platforms", option: "Platforms" })
-  //     // );
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // if (!main.data.editGame) {
-  //   return <div>Espere..</div>;
-  // }
-
   const handleImageClick = () => inputFile.current.click();
 
   const handleImageChangePreview = (e) => {
@@ -370,8 +324,6 @@ const CrudPage = () => {
     const value = e.target.value;
     dispatch(changeInputValue({ name, value }));
   };
-
-  // TODO: para crear un juego nuevo, inicializar detailedGame con los valores en blanco y SIN incluir id
 
   const handleShowListbox = (option) => {
     dispatch(showListbox(option));
@@ -450,10 +402,8 @@ const CrudPage = () => {
           <GenresPlatFormsLabel>
             <PagActionBtn
               theme={
-                // listbox.genres.selected === "Genres" ? "primary" : "secondary"
                 listbox.genres.selected === "All" ? "primary" : "secondary"
               }
-              // onClick={() => dispatch(showListbox("genres"))}
               onClick={() => handleShowListbox("genres")}
             >
               <span>Add genre</span>
@@ -491,7 +441,6 @@ const CrudPage = () => {
                   ? "primary"
                   : "secondary"
               }
-              // onClick={() => dispatch(showListbox("platforms"))}
               onClick={() => handleShowListbox("platforms")}
             >
               <span>Add Platform</span>

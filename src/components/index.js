@@ -9,3 +9,4 @@ export { default as Loading } from "./content/Loading";
 export { default as DateBox } from "./content/DateBox";
 export { default as Card } from "./content/Card";
 export { default as Badge } from "./content/Badge";
+export { default as Footer } from "./content/Footer";

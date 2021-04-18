@@ -2,10 +2,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import dayjs from "dayjs";
-// import {
-//   clearArrays,
-//   startLoadingDetailedGame,
-// } from "../../actions/main.actions";
 import { backgroundColor, textColor } from "../../global-styles";
 import { useParams } from "react-router-dom";
 import {
