@@ -1,5 +1,5 @@
-// const baseUrl = 'https://aac-games-app.herokuapp.com';
-const baseUrl = 'http://localhost:8080';
+const baseUrl = 'https://aac-games-app.herokuapp.com';
+// const baseUrl = 'http://localhost:8080';
 
 const fetchingData = (endpoint, data, method = 'GET') => {
   const url = `${baseUrl}/${endpoint}`;
