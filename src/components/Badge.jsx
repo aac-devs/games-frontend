@@ -1,5 +1,7 @@
-import styled from "styled-components";
-import { backgroundColor, textColor } from "../../global-styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { backgroundColor, textColor } from '../global-styles';
 
 const BadgeContainer = styled.div`
   position: relative;
@@ -10,10 +12,10 @@ const BadgeContainer = styled.div`
   box-sizing: border-box;
   margin-right: 12px;
   margin: 0 7px 7px 0;
-  padding: 5px ${(props) => (props.hasMarginRight ? "30px" : "10px")} 5px 10px;
+  padding: 5px ${(props) => (props.hasMarginRight ? '30px' : '10px')} 5px 10px;
   border-radius: 20px;
   border: 1px solid hsla(0, 0%, 100%, 0.2);
-  font-family: "Roboto", sans-serif, Helvetica, Arial;
+  font-family: 'Roboto', sans-serif, Helvetica, Arial;
   background-color: ${(props) => props.background};
   transition: border-color 0.3s;
 `;
@@ -45,19 +47,35 @@ const BadgeButton = styled.button`
 
 const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
   const backColor =
-    name === "genres"
+    name === 'genres'
       ? backgroundColor.primary.dark
       : backgroundColor.primary.normal;
   return (
     <BadgeContainer background={backColor} hasMarginRight={hasCloseButton}>
       <BadgeText>{text}</BadgeText>
       {hasCloseButton && (
-        <BadgeButton onClick={(e) => handleClose(id, name)}>
-          <i className="fas fa-times"></i>
+        <BadgeButton onClick={() => handleClose(id, name)}>
+          <i className="fas fa-times" />
         </BadgeButton>
       )}
     </BadgeContainer>
   );
+};
+
+Badge.propTypes = {
+  id: PropTypes.number,
+  text: PropTypes.string,
+  name: PropTypes.string,
+  hasCloseButton: PropTypes.bool,
+  handleClose: PropTypes.func,
+};
+
+Badge.defaultProps = {
+  id: 1,
+  text: 'badge name',
+  name: 'category',
+  hasCloseButton: false,
+  handleClose: () => {},
 };
 
 export default Badge;

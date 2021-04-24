@@ -1,10 +1,11 @@
-import { useState } from "react";
-import styled from "styled-components";
-import dayjs from "dayjs";
-import { listItems } from "../../helpers/utils";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
+import listItems from '../helpers/utils';
 
 const BackgroundDateSelected = styled.div`
-  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   background-color: black;
   filter: brightness(50%);
   opacity: 0.4;
@@ -16,7 +17,7 @@ const BackgroundDateSelected = styled.div`
 `;
 
 const Container = styled.div`
-  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   position: absolute;
   top: -5px;
   left: -70px;
@@ -93,12 +94,12 @@ const DateBox = ({
   handleSelectedDate,
 }) => {
   const [date, setDate] = useState(currentDate);
-  const arrayDays = listItems("day", 31, 1);
-  const arrayMonths = listItems("month", 12, 0);
+  const arrayDays = listItems('day', 31, 1);
+  const arrayMonths = listItems('month', 12, 0);
   const arrayYears = listItems(
-    "year",
-    dayjs().format("YYYY") - 1970 + 11,
-    1970
+    'year',
+    dayjs().format('YYYY') - 1970 + 11,
+    1970,
   );
   const handleDateChange = (e) => {
     const { name, value } = e.target;
@@ -110,9 +111,7 @@ const DateBox = ({
       <Container show={show}>
         <Header>
           <Title>Release date</Title>
-          <SaveButton onClick={(e) => handleSelectedDate(date)}>
-            Save
-          </SaveButton>
+          <SaveButton onClick={() => handleSelectedDate(date)}>Save</SaveButton>
         </Header>
         <Body>
           <CustomSelect
@@ -143,6 +142,20 @@ const DateBox = ({
       </Container>
     </>
   );
+};
+
+DateBox.propTypes = {
+  show: PropTypes.bool,
+  handleSelectedDateClose: PropTypes.func,
+  currentDate: PropTypes.string,
+  handleSelectedDate: PropTypes.func,
+};
+
+DateBox.defaultProps = {
+  show: false,
+  handleSelectedDateClose: () => {},
+  currentDate: '',
+  handleSelectedDate: () => {},
 };
 
 export default DateBox;

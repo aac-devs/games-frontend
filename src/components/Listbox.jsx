@@ -1,11 +1,9 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import {
-  hideListbox,
-  setSelectedOption,
-} from "../../actions/components.actions";
-import { BackScreen } from "../../global-styles";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { hideListbox, setSelectedOption } from '../actions/components.actions';
+import { BackScreen } from '../global-styles';
 
 const Container = styled.div`
   position: absolute;
@@ -55,14 +53,7 @@ const Container = styled.div`
   }
 `;
 
-const Listbox = ({
-  listName,
-  width = "220px",
-  left,
-  right,
-  top = "0px",
-  exclude = [],
-}) => {
+const Listbox = ({ listName, width, left, right, top, exclude }) => {
   const dispatch = useDispatch();
   const { listbox } = useSelector((state) => state.components);
   const [back, setBack] = useState(true);
@@ -76,6 +67,7 @@ const Listbox = ({
     dispatch(hideListbox(listName));
     setBack(false);
   };
+  console.log({ listName, width, left, right, top, exclude });
   return (
     <>
       {back && <BackScreen onClick={handleBackScreenClick} />}
@@ -83,18 +75,41 @@ const Listbox = ({
         <ul>
           {listbox[listName].list.map((item) =>
             !exclude.includes(item) ? (
-              <li key={item} onClick={handleOptionChange} id={item}>
+              <li
+                key={item}
+                onClick={handleOptionChange}
+                id={item}
+                aria-hidden="true"
+              >
                 {item}&nbsp;
                 {listbox[listName].selected === item && (
-                  <i className="fas fa-check"></i>
+                  <i className="fas fa-check" />
                 )}
               </li>
-            ) : null
+            ) : null,
           )}
         </ul>
       </Container>
     </>
   );
+};
+
+Listbox.propTypes = {
+  listName: PropTypes.string,
+  width: PropTypes.string,
+  left: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  right: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  top: PropTypes.string,
+  exclude: PropTypes.arrayOf(PropTypes.string),
+};
+
+Listbox.defaultProps = {
+  listName: '',
+  width: '220px',
+  left: 0,
+  right: 0,
+  top: '0px',
+  exclude: [],
 };
 
 export default Listbox;

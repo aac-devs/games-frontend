@@ -1,4 +1,4 @@
-import { types } from "../types/types";
+import types from '../types/types';
 
 const initialState = {
   games: [],
@@ -8,22 +8,22 @@ const initialState = {
 
   detailedGame: [],
 
-  searchName: "",
+  searchName: '',
   search: false,
 
   nextPage: 1,
   savingGameFlag: false,
 
-  orderBy: "None", // 'none' | 'name' | 'rating' | 'released'
-  orderSense: "lower-to-higher", // 'up-to-down' | 'down-to-up'
-  filterSource: "All", // 'all' | 'rawg' | 'custom'
-  filterGenre: "All", // 'All' | 'action' | ... | 'strategy'
+  orderBy: 'None', // 'none' | 'name' | 'rating' | 'released'
+  orderSense: 'lower-to-higher', // 'up-to-down' | 'down-to-up'
+  filterSource: 'All', // 'all' | 'rawg' | 'custom'
+  filterGenre: 'All', // 'All' | 'action' | ... | 'strategy'
 
-  currentScreen: "", // 'home' | 'games' | 'detail' | 'create' | 'update'
+  currentScreen: '', // 'home' | 'games' | 'detail' | 'create' | 'update'
   setTemporaryImage: null,
 };
 
-export const gamesReducer = (state = initialState, action) => {
+const gamesReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.games.cleanArrays:
       return {
@@ -34,10 +34,10 @@ export const gamesReducer = (state = initialState, action) => {
         platforms: [],
         detailedGame: [],
         nextPage: 1,
-        orderBy: "None",
-        orderSense: "lower-to-higher",
-        filterSource: "All",
-        filterGenre: "All",
+        orderBy: 'None',
+        orderSense: 'lower-to-higher',
+        filterSource: 'All',
+        filterGenre: 'All',
       };
     case types.games.loadArray:
       return {
@@ -153,3 +153,5 @@ export const gamesReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+export default gamesReducer;

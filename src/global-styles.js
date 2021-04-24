@@ -1,28 +1,28 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from 'styled-components';
 
 export const backgroundColor = {
   primary: {
-    normal: "#212121",
-    light: "#484848",
-    dark: "#000000",
+    normal: '#212121',
+    light: '#484848',
+    dark: '#000000',
   },
   secondary: {
-    normal: "#2962ff",
-    light: "#768fff",
-    dark: "#0039cb",
+    normal: '#2962ff',
+    light: '#768fff',
+    dark: '#0039cb',
   },
 };
 
 export const textColor = {
   primary: {
-    normal: "#ffffff",
-    light: "#ffffff",
-    dark: "#ffffff",
+    normal: '#ffffff',
+    light: '#ffffff',
+    dark: '#ffffff',
   },
   secondary: {
-    normal: "#ffffff",
-    light: "#000000",
-    dark: "#ffffff",
+    normal: '#ffffff',
+    light: '#000000',
+    dark: '#ffffff',
   },
 };
 

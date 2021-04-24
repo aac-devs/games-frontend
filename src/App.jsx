@@ -1,9 +1,10 @@
-import { Provider } from "react-redux";
-import { store } from "./store/store";
-import { GlobalStyles } from "./global-styles";
-import { AppRouter } from "./routers/app.routes";
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import { GlobalStyles } from './global-styles';
+import AppRouter from './routers/app.routes';
 
-export const App = () => {
+const App = () => {
   return (
     <Provider store={store}>
       <GlobalStyles />
@@ -11,3 +12,5 @@ export const App = () => {
     </Provider>
   );
 };
+
+export default App;

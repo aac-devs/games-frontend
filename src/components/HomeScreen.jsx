@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { setCurrentScreen } from "../../actions/games.actions";
-import { backgroundColor, textColor } from "../../global-styles";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { setCurrentScreen } from '../actions/games.actions';
+import { backgroundColor, textColor } from '../global-styles';
 
 const Background = styled.div`
   height: 100vh;
   width: 100%;
   background-image: linear-gradient(rgba(5, 5, 5, 0), rgb(0, 0, 0)),
-    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url("/home.png");
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url('/home.png');
   max-height: 100%;
   background-size: cover;
   background-position: top;
@@ -27,7 +27,7 @@ const Title = styled(Link)`
   text-shadow: 4px 4px 7px #777;
   z-index: 10;
   text-align: center;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 35px;
   font-weight: 700;
   color: ${textColor.primary.dark};
@@ -48,19 +48,18 @@ const Title = styled(Link)`
   }
 `;
 
-const HomePage = () => {
+const HomeScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setCurrentScreen("home"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(setCurrentScreen('home'));
   }, []);
 
   return (
     <div
       style={{
-        position: "relative",
-        height: "100%",
+        position: 'relative',
+        height: '100%',
       }}
     >
       <Background className="art art_colored">
@@ -70,4 +69,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default HomeScreen;

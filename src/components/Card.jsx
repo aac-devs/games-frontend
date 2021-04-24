@@ -1,10 +1,11 @@
-import dayjs from "dayjs";
-import { memo } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { startDeletingGame } from "../../actions/games.actions";
-import { backgroundColor, textColor } from "../../global-styles";
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { startDeletingGame } from '../actions/games.actions';
+import { backgroundColor, textColor } from '../global-styles';
 
 const Container = styled.div`
   background-color: ${backgroundColor.primary.normal};
@@ -24,10 +25,10 @@ const Container = styled.div`
   grid-template-columns: 70% 30%;
   grid-template-rows: 10% 1fr 12% auto;
   grid-template-areas:
-    "rls rtg"
-    "img img"
-    "ttl ttl"
-    "gnr gnr";
+    'rls rtg'
+    'img img'
+    'ttl ttl'
+    'gnr gnr';
 `;
 
 const ImageSection = styled.div`
@@ -148,7 +149,7 @@ const Hr = styled.hr`
   background-color: ${textColor.primary.dark};
 `;
 
-const color = "#e91e63";
+const color = '#e91e63';
 
 const DeleteButton = styled.button`
   position: absolute;
@@ -162,7 +163,7 @@ const DeleteButton = styled.button`
   color: white;
   padding: 10px 11px;
   transition: all 0.2s;
-  font-family: "Roboto", sans-serif, Helvetica, Arial;
+  font-family: 'Roboto', sans-serif, Helvetica, Arial;
   font-weight: 700;
   cursor: pointer;
   &:hover {
@@ -178,13 +179,14 @@ const Card = memo(
       e.stopPropagation();
       dispatch(startDeletingGame(id));
     };
-    const ratingColor =
-      rating >= 4.5
-        ? "linear-gradient(180deg, #b4ec51, #429321)"
-        : rating >= 3
-        ? "linear-gradient(180deg, #649bff, #4354b9)"
-        : "linear-gradient(180deg, #ff5764, #f11a2a)";
-
+    let ratingColor = '';
+    if (rating >= 4.5) {
+      ratingColor = 'linear-gradient(180deg, #b4ec51, #429321)';
+    } else if (rating >= 3) {
+      ratingColor = 'linear-gradient(180deg, #649bff, #4354b9)';
+    } else {
+      ratingColor = 'linear-gradient(180deg, #ff5764, #f11a2a)';
+    }
     return (
       <Container ref={setElement}>
         <ImageSection>
@@ -195,7 +197,7 @@ const Card = memo(
         </Title>
         <Released>
           <h5>Released</h5>
-          <span>{dayjs(released).format("MMMM D, YYYY")}</span>
+          <span>{dayjs(released).format('MMMM D, YYYY')}</span>
         </Released>
         <Genres>
           <Hr />
@@ -212,12 +214,39 @@ const Card = memo(
         </Rating>
         {enableDelete && (
           <DeleteButton onClick={handleDeleteGame}>
-            <i className="fas fa-minus fa-2x"></i>
+            <i className="fas fa-minus fa-2x" />
           </DeleteButton>
         )}
       </Container>
     );
-  }
+  },
 );
+
+Card.propTypes = {
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  image: PropTypes.string,
+  name: PropTypes.string,
+  released: PropTypes.string,
+  rating: PropTypes.number,
+  genres: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+    }),
+  ),
+  setElement: PropTypes.func,
+  enableDelete: PropTypes.bool,
+};
+
+Card.defaultProps = {
+  id: undefined,
+  image: '',
+  name: 'name',
+  released: '',
+  rating: 3,
+  genres: [],
+  setElement: null,
+  enableDelete: false,
+};
 
 export default Card;

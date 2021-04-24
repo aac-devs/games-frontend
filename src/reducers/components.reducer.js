@@ -1,28 +1,28 @@
-import { types } from "../types/types";
+import types from '../types/types';
 
 const initialState = {
   listbox: {
     genres: {
       list: [],
-      selected: "All",
+      selected: 'All',
       visible: false,
     },
     platforms: {
       list: [],
-      selected: "Platforms",
+      selected: 'Platforms',
       visible: false,
     },
     source: {
-      list: ["All", "Rawg", "Custom"],
-      selected: "All",
+      list: ['All', 'Rawg', 'Custom'],
+      selected: 'All',
       visible: false,
     },
     sorted: {
-      list: ["None", "Name", "Rating", "Released"],
-      selected: "None",
+      list: ['None', 'Name', 'Rating', 'Released'],
+      selected: 'None',
       visible: false,
     },
-    parent: "none", // 'navbar' | 'main'
+    parent: 'none', // 'navbar' | 'main'
   },
   ratingPicker: {
     show: false,
@@ -32,7 +32,7 @@ const initialState = {
   },
 };
 
-export const componentsReducer = (state = initialState, action) => {
+const componentsReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.components.loadGenresNames:
       return {
@@ -133,3 +133,5 @@ export const componentsReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+export default componentsReducer;

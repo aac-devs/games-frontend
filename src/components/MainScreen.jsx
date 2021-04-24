@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 import {
   resetListboxValues,
   setListboxParent,
   showListbox,
   startLoadingListboxGenres,
-} from "../../actions/components.actions";
+} from '../actions/components.actions';
 import {
   changeFilterGenre,
   changeFilterSource,
@@ -17,9 +17,10 @@ import {
   resetGoSearch,
   setCurrentScreen,
   startModifyingGames,
-} from "../../actions/games.actions";
-import { backgroundColor, textColor } from "../../global-styles";
-import { Card, Listbox } from "../index";
+} from '../actions/games.actions';
+import { backgroundColor, textColor } from '../global-styles';
+import Card from './Card';
+import Listbox from './Listbox';
 
 const Container = styled.div`
   width: 100%;
@@ -84,8 +85,8 @@ const PagActionsSection = styled.div`
 
 const PagActionBtn = styled.button`
   background-color: ${(props) =>
-    props.theme === "primary" ? backgroundColor.primary.normal : "#fff"};
-  color: ${(props) => (props.theme === "primary" ? "#fff" : "#000")};
+    props.theme === 'primary' ? backgroundColor.primary.normal : '#fff'};
+  color: ${(props) => (props.theme === 'primary' ? '#fff' : '#000')};
   font-size: 14px;
   border: none;
   width: auto;
@@ -98,14 +99,14 @@ const PagActionBtn = styled.button`
   justify-content: space-between;
   i {
     transition: all 0.3s;
-    color: ${(props) => (props.theme === "primary" ? "#fff" : "#000")};
+    color: ${(props) => (props.theme === 'primary' ? '#fff' : '#000')};
   }
   &:hover {
     color: ${(props) =>
-      props.theme === "primary" ? textColor.primary.normal : "#000"};
+      props.theme === 'primary' ? textColor.primary.normal : '#000'};
     i {
       color: ${(props) =>
-        props.theme === "primary" ? textColor.primary.normal : "#000"};
+        props.theme === 'primary' ? textColor.primary.normal : '#000'};
     }
   }
 `;
@@ -125,7 +126,7 @@ const PagUpDownBtn = styled.button`
   }
 `;
 
-const MainPage = () => {
+const MainScreen = () => {
   const dispatch = useDispatch();
   const { listbox } = useSelector((state) => state.components);
   const {
@@ -149,8 +150,8 @@ const MainPage = () => {
           dispatch(dataRequest());
         }
       },
-      { threshold: 1 }
-    )
+      { threshold: 1 },
+    ),
   );
   const [element, setElement] = useState(null);
 
@@ -168,68 +169,92 @@ const MainPage = () => {
   }, [element, orderBy]);
 
   useEffect(() => {
-    dispatch(setCurrentScreen("games"));
+    dispatch(setCurrentScreen('games'));
     if (!savingGameFlag) {
       dispatch(resetListboxValues());
       dispatch(cleanArrays());
       dispatch(dataRequest());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savingGameFlag]);
 
   useEffect(() => {
     if (games.length > 0) {
       dispatch(startModifyingGames());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [games]);
 
   useEffect(() => {
-    if (search && searchName !== "") {
+    if (search && searchName !== '') {
       dispatch(cleanArrays());
       dispatch(dataRequest());
       dispatch(resetGoSearch());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   useEffect(() => {
     if (genres.length > 0) {
       dispatch(startLoadingListboxGenres());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [genres]);
 
   useEffect(() => {
     dispatch(changeOrderBy(listbox.sorted.selected));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listbox.sorted.selected]);
 
   useEffect(() => {
     dispatch(changeFilterSource(listbox.source.selected));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listbox.source.selected]);
 
   useEffect(() => {
     dispatch(changeFilterGenre(listbox.genres.selected));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listbox.genres.selected]);
 
   useEffect(() => {
     dispatch(startModifyingGames());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy, orderSense, filterSource, filterGenre]);
 
-  const handleChangeOrderSense = (e) => {
-    orderSense === "lower-to-higher"
-      ? dispatch(changeOrderSense("higher-to-lower"))
-      : dispatch(changeOrderSense("lower-to-higher"));
+  const handleChangeOrderSense = () => {
+    // orderSense === 'lower-to-higher'
+    //   ? dispatch(changeOrderSense('higher-to-lower'))
+    //   : dispatch(changeOrderSense('lower-to-higher'));
+
+    dispatch(
+      orderSense === 'lower-to-higher'
+        ? changeOrderSense('higher-to-lower')
+        : changeOrderSense('lower-to-higher'),
+    );
   };
 
   const handleShowListbox = (option) => {
     dispatch(showListbox(option));
-    dispatch(setListboxParent("main"));
+    dispatch(setListboxParent('main'));
   };
+
+  let orderIcon = '';
+  switch (orderBy) {
+    case 'None':
+      orderIcon =
+        orderSense === 'lower-to-higher'
+          ? 'fas fa-sort-amount-down-alt fa-2x'
+          : 'fas fa-sort-amount-down fa-2x';
+      break;
+    case 'Name':
+      orderIcon =
+        orderSense === 'lower-to-higher'
+          ? 'fas fa-sort-alpha-down fa-2x'
+          : 'fas fa-sort-alpha-down-alt fa-2x';
+      break;
+    case 'Rating':
+      orderIcon =
+        orderSense === 'lower-to-higher'
+          ? 'fas fa-sort-numeric-down fa-2x'
+          : 'fas fa-sort-numeric-down-alt fa-2x';
+      break;
+    case 'Released':
+      break;
+    default:
+      break;
+  }
 
   return (
     <Container>
@@ -240,34 +265,25 @@ const MainPage = () => {
               <>
                 <PagActionBtn
                   theme="primary"
-                  onClick={() => handleShowListbox("sorted")}
+                  onClick={() => handleShowListbox('sorted')}
                 >
                   <span>
                     Order by:&nbsp;&nbsp;
                     <strong>{listbox.sorted.selected}</strong>
                   </span>
                   &nbsp;&nbsp;
-                  <i className="fas fa-chevron-down"></i>
+                  <i className="fas fa-chevron-down" />
                 </PagActionBtn>
-                {listbox.sorted.visible && listbox.parent === "main" && (
-                  <Listbox listName="sorted" left={0} right="auto" />
+                {listbox.sorted.visible && listbox.parent === 'main' && (
+                  <Listbox
+                    listName="sorted"
+                    left={0}
+                    right="auto"
+                    exclude={[]}
+                  />
                 )}
                 <PagUpDownBtn onClick={handleChangeOrderSense}>
-                  <i
-                    className={
-                      orderBy === "None"
-                        ? orderSense === "lower-to-higher"
-                          ? "fas fa-sort-amount-down-alt fa-2x"
-                          : "fas fa-sort-amount-down fa-2x"
-                        : orderBy === "Name"
-                        ? orderSense === "lower-to-higher"
-                          ? "fas fa-sort-alpha-down fa-2x"
-                          : "fas fa-sort-alpha-down-alt fa-2x"
-                        : orderSense === "lower-to-higher"
-                        ? "fas fa-sort-numeric-down fa-2x"
-                        : "fas fa-sort-numeric-down-alt fa-2x"
-                    }
-                  ></i>
+                  <i className={orderIcon} />
                 </PagUpDownBtn>
               </>
             </PagActionsSection>
@@ -275,18 +291,18 @@ const MainPage = () => {
             <PagActionsSection>
               <PagActionBtn
                 theme={
-                  listbox.source.selected === "All" ? "primary" : "secondary"
+                  listbox.source.selected === 'All' ? 'primary' : 'secondary'
                 }
-                onClick={() => handleShowListbox("source")}
+                onClick={() => handleShowListbox('source')}
               >
                 <span>
                   Source:&nbsp;&nbsp;
                   <strong>{listbox.source.selected}</strong>
                 </span>
                 &nbsp; ({render.length}) &nbsp;&nbsp;&nbsp;
-                <i className="fas fa-chevron-down"></i>
+                <i className="fas fa-chevron-down" />
               </PagActionBtn>
-              {listbox.source.visible && listbox.parent === "main" && (
+              {listbox.source.visible && listbox.parent === 'main' && (
                 <Listbox listName="source" left={0} right="auto" />
               )}
             </PagActionsSection>
@@ -294,18 +310,18 @@ const MainPage = () => {
             <PagActionsSection>
               <PagActionBtn
                 theme={
-                  listbox.genres.selected === "All" ? "primary" : "secondary"
+                  listbox.genres.selected === 'All' ? 'primary' : 'secondary'
                 }
-                onClick={() => handleShowListbox("genres")}
+                onClick={() => handleShowListbox('genres')}
               >
                 <span>
                   Genres:&nbsp;&nbsp;
                   <strong>{listbox.genres.selected}</strong>
                 </span>
                 &nbsp; ({render.length})&nbsp;&nbsp;&nbsp;
-                <i className="fas fa-chevron-down"></i>
+                <i className="fas fa-chevron-down" />
               </PagActionBtn>
-              {listbox.genres.visible && listbox.parent === "main" && (
+              {listbox.genres.visible && listbox.parent === 'main' && (
                 <Listbox listName="genres" left="0" right="auto" />
               )}
             </PagActionsSection>
@@ -314,20 +330,26 @@ const MainPage = () => {
 
         <ListSection>
           {render.length > 0 &&
-            render.map((game, index) => (
-              <Card
-                setElement={render.length - 1 === index ? setElement : null}
-                key={game.id}
-                enableDelete={
-                  game.id.toString().startsWith("own") ? true : false
-                }
-                {...game}
-              />
-            ))}
+            render.map((game, index) => {
+              const elementRef =
+                render.length - 1 === index ? setElement : null;
+              return (
+                <Card
+                  setElement={
+                    filterSource !== 'All' || filterGenre !== 'All'
+                      ? null
+                      : elementRef
+                  }
+                  key={game.id}
+                  enableDelete={game.id.toString().startsWith('own')}
+                  {...game}
+                />
+              );
+            })}
         </ListSection>
       </MainSection>
     </Container>
   );
 };
 
-export default MainPage;
+export default MainScreen;

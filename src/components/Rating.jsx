@@ -1,8 +1,9 @@
-import { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 const BackgroundRating = styled.div`
-  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   background-color: black;
   filter: brightness(50%);
   opacity: 0.4;
@@ -14,7 +15,7 @@ const BackgroundRating = styled.div`
 `;
 
 const Container = styled.div`
-  visibility: ${(props) => (props.show ? "visible" : "hidden")};
+  visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
   position: absolute;
   top: -5px;
   right: -10px;
@@ -82,7 +83,7 @@ const Rating = ({
       <Container show={show}>
         <Header>
           <Title>Rating</Title>
-          <SaveButton onClick={(e) => handleChangeRating(rating)}>
+          <SaveButton onClick={() => handleChangeRating(rating)}>
             Save
           </SaveButton>
         </Header>
@@ -100,6 +101,20 @@ const Rating = ({
       </Container>
     </>
   );
+};
+
+Rating.propTypes = {
+  currentRating: PropTypes.number,
+  show: PropTypes.bool,
+  handleChangeRating: PropTypes.func,
+  handleChangeRatingClose: PropTypes.func,
+};
+
+Rating.defaultProps = {
+  currentRating: 3,
+  show: false,
+  handleChangeRating: () => {},
+  handleChangeRatingClose: () => {},
 };
 
 export default Rating;

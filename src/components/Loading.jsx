@@ -1,5 +1,7 @@
-import styled, { keyframes } from "styled-components";
-import { backgroundColor } from "../../global-styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled, { keyframes } from 'styled-components';
+import { backgroundColor } from '../global-styles';
 
 const animate = keyframes`
   0% {
@@ -41,7 +43,7 @@ const StyledSpan = styled.span`
   transform: rotate(calc(18deg * var(--i)));
   animation-play-state: ${(props) => props.state};
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -57,28 +59,32 @@ const StyledSpan = styled.span`
   }
 `;
 
-let dot = [];
-for (let i = 0; i < 20; i++) {
+const dot = [];
+for (let i = 0; i < 20; i += 1) {
   dot.push(i);
 }
 
 const Loading = ({ animation }) => {
-  const state = animation ? "running" : "paused";
-  const visible = animation ? "visible" : "hidden";
-  const z = animation ? "100" : "-1";
+  const state = animation ? 'running' : 'paused';
+  const visible = animation ? 'visible' : 'hidden';
+  const z = animation ? '100' : '-1';
   return (
     <Container z={z}>
       <Loader visible={visible}>
         {dot.map((i) => (
-          <StyledSpan
-            key={i}
-            state={state}
-            style={{ "--i": `${i + 1}` }}
-          ></StyledSpan>
+          <StyledSpan key={i} state={state} style={{ '--i': `${i + 1}` }} />
         ))}
       </Loader>
     </Container>
   );
+};
+
+Loading.propTypes = {
+  animation: PropTypes.bool,
+};
+
+Loading.defaultProps = {
+  animation: false,
 };
 
 export default Loading;

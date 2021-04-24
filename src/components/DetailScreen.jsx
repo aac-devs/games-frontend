@@ -1,13 +1,10 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import dayjs from "dayjs";
-import { backgroundColor, textColor } from "../../global-styles";
-import { useParams } from "react-router-dom";
-import {
-  setCurrentScreen,
-  startLoadingArrays,
-} from "../../actions/games.actions";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
+import { backgroundColor, textColor } from '../global-styles';
+import { setCurrentScreen, startLoadingArrays } from '../actions/games.actions';
 
 const Container = styled.div`
   display: flex;
@@ -160,19 +157,18 @@ const GenPlatBody = styled.div`
   }
 `;
 
-const DetailPage = () => {
-  let params = useParams();
+const DetailScreen = () => {
+  const params = useParams();
   const dispatch = useDispatch();
   const { detailedGame } = useSelector((state) => state.games);
 
   useEffect(() => {
-    if (params.id.startsWith("own")) {
-      dispatch(setCurrentScreen("detail-own"));
+    if (params.id.startsWith('own')) {
+      dispatch(setCurrentScreen('detail-own'));
     } else {
-      dispatch(setCurrentScreen("detail"));
+      dispatch(setCurrentScreen('detail'));
     }
-    dispatch(startLoadingArrays("detailedGame", `games/detail/${params.id}`));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(startLoadingArrays('detailedGame', `games/detail/${params.id}`));
   }, []);
 
   if (!detailedGame[0]?.id) {
@@ -188,19 +184,22 @@ const DetailPage = () => {
     genres,
     platforms,
   } = detailedGame[0];
-  const ratingColor =
-    rating >= 4.5
-      ? "linear-gradient(180deg, #b4ec51, #429321)"
-      : rating >= 3
-      ? "linear-gradient(180deg, #649bff, #4354b9)"
-      : "linear-gradient(180deg, #ff5764, #f11a2a)";
+
+  let ratingColor = '';
+  if (rating >= 4.5) {
+    ratingColor = 'linear-gradient(180deg, #b4ec51, #429321)';
+  } else if (rating >= 3) {
+    ratingColor = 'linear-gradient(180deg, #649bff, #4354b9)';
+  } else {
+    ratingColor = 'linear-gradient(180deg, #ff5764, #f11a2a)';
+  }
 
   return (
     <Container>
       <Image url={image} />
       <Header>
         <Released>
-          <span>{dayjs(released).format("MMMM D, YYYY")}</span>
+          <span>{dayjs(released).format('MMMM D, YYYY')}</span>
         </Released>
         <Rating ratingColor={ratingColor}>
           Rating:&nbsp;<span>{rating}</span>
@@ -209,7 +208,7 @@ const DetailPage = () => {
       <Title>
         <div>{name}</div>
       </Title>
-      <Image></Image>
+      <Image />
       <About>About</About>
       <Description>
         <p> {description}</p>
@@ -236,4 +235,4 @@ const DetailPage = () => {
   );
 };
 
-export default DetailPage;
+export default DetailScreen;

@@ -1,25 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import {
-  setListboxParent,
-  showListbox,
-} from "../../actions/components.actions";
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { setListboxParent, showListbox } from '../actions/components.actions';
 import {
   changeSearchName,
   cleanArrays,
   dataRequest,
   setGoSearch,
   startSavingGame,
-} from "../../actions/games.actions";
-import { backgroundColor, BackScreen, textColor } from "../../global-styles";
-import { Listbox } from "../index";
+} from '../actions/games.actions';
+import { backgroundColor, BackScreen, textColor } from '../global-styles';
+import Listbox from './Listbox';
 
 const SearchSection = styled.div`
   visibility: ${(props) => props.visible};
   background-color: ${(props) =>
-    props.focused ? "#fff" : `${backgroundColor.primary.light}`};
+    props.focused ? '#fff' : `${backgroundColor.primary.light}`};
   margin: 0 10px;
   max-width: 500px;
   flex-grow: 1;
@@ -33,7 +30,7 @@ const SearchSection = styled.div`
     align-items: center;
     input {
       width: 60%;
-      color: ${(props) => (props.focused ? "#000" : "#ccc")};
+      color: ${(props) => (props.focused ? '#000' : '#ccc')};
       background-color: transparent;
       height: 80%;
       flex-grow: 1;
@@ -84,7 +81,7 @@ const NavLogo = styled(CustomLink)`
   text-shadow: 3px 3px 3px #000;
   padding: 0;
   font-size: 30px;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   width: 150px;
   min-width: 150px;
   text-align: center;
@@ -201,16 +198,16 @@ const Navbar = () => {
   const { listbox } = useSelector((state) => state.components);
   const [toggle, setToggle] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const searchInput = useRef();
 
   useEffect(() => {
     const handleFocus = () => {
       setFocused(false);
     };
-    window.addEventListener("focusout", handleFocus);
+    window.addEventListener('focusout', handleFocus);
     return () => {
-      window.removeEventListener("focusout", handleFocus);
+      window.removeEventListener('focusout', handleFocus);
     };
   }, []);
 
@@ -220,7 +217,7 @@ const Navbar = () => {
     dispatch(setGoSearch());
   };
 
-  const handleSearchClick = (e) => {
+  const handleSearchClick = () => {
     setFocused(true);
   };
 
@@ -228,22 +225,22 @@ const Navbar = () => {
     setSearchValue(e.target.value);
   };
 
-  const handleResetSearching = (e) => {
-    setSearchValue("");
-    dispatch(changeSearchName(""));
+  const handleResetSearching = () => {
+    setSearchValue('');
+    dispatch(changeSearchName(''));
     dispatch(cleanArrays());
     dispatch(dataRequest());
   };
 
-  const handleSaveGame = (e) => {
-    //TODO: Validar campos:
+  const handleSaveGame = () => {
+    // TODO: Validar campos:
     dispatch(startSavingGame());
     setToggle(false);
   };
 
   const handleShowListbox = (value) => {
     dispatch(showListbox(value));
-    dispatch(setListboxParent("navbar"));
+    dispatch(setListboxParent('navbar'));
     setToggle(false);
   };
 
@@ -256,7 +253,7 @@ const Navbar = () => {
       {toggle && <BackScreen onClick={handleToggleButton} />}
       <Container>
         <NavLogo to="/">aac-devs</NavLogo>
-        {currentScreen === "games" && (
+        {currentScreen === 'games' && (
           <SearchSection focused={focused}>
             <form onSubmit={handleSearchGame}>
               <input
@@ -267,41 +264,49 @@ const Navbar = () => {
                 value={searchValue}
                 onChange={handleChangeSearchName}
               />
-              {searchValue !== "" ? (
-                <i className="fas fa-times" onClick={handleResetSearching}></i>
+              {searchValue !== '' ? (
+                <i
+                  className="fas fa-times"
+                  onClick={handleResetSearching}
+                  aria-hidden="true"
+                />
               ) : (
-                <i className="fas fa-search" onClick={handleSearchGame}></i>
+                <i
+                  className="fas fa-search"
+                  onClick={handleSearchGame}
+                  aria-hidden="true"
+                />
               )}
             </form>
           </SearchSection>
         )}
         <ToggleButton onClick={handleToggleButton}>
           {!toggle ? (
-            <i className="fas fa-bars"></i>
+            <i className="fas fa-bars" />
           ) : (
-            <i className="fas fa-times"></i>
+            <i className="fas fa-times" />
           )}
         </ToggleButton>
         <NavUl
-          className={`${toggle ? "nav-menu-visible" : "nav-menu-invisible"}`}
+          className={`${toggle ? 'nav-menu-visible' : 'nav-menu-invisible'}`}
         >
-          {currentScreen !== "home" && (
+          {currentScreen !== 'home' && (
             <NavLi onClick={() => setToggle(false)} to="/">
               home
             </NavLi>
           )}
-          {currentScreen !== "games" && (
+          {currentScreen !== 'games' && (
             <NavLi onClick={() => setToggle(false)} to="/games">
               games
             </NavLi>
           )}
 
-          {currentScreen !== "create" && currentScreen !== "update" && (
+          {currentScreen !== 'create' && currentScreen !== 'update' && (
             <NavLi onClick={() => setToggle(false)} to="/games/create">
               new
             </NavLi>
           )}
-          {currentScreen === "detail-own" && (
+          {currentScreen === 'detail-own' && (
             <NavLi
               onClick={() => setToggle(false)}
               to={`/games/update/${detailedGame[0]?.id}`}
@@ -310,21 +315,21 @@ const Navbar = () => {
             </NavLi>
           )}
 
-          {currentScreen === "games" && toggle && (
+          {currentScreen === 'games' && toggle && (
             <>
               {toggle && <hr />}
-              <MenuItem onClick={(e) => handleShowListbox("sorted")}>
+              <MenuItem onClick={() => handleShowListbox('sorted')}>
                 order by
               </MenuItem>
-              <MenuItem onClick={(e) => handleShowListbox("source")}>
+              <MenuItem onClick={() => handleShowListbox('source')}>
                 data source
               </MenuItem>
-              <MenuItem onClick={(e) => handleShowListbox("genres")}>
+              <MenuItem onClick={() => handleShowListbox('genres')}>
                 genre
               </MenuItem>
             </>
           )}
-          {(currentScreen === "create" || currentScreen === "update") && (
+          {(currentScreen === 'create' || currentScreen === 'update') && (
             <>
               {toggle && <hr />}
               <NavLi onClick={handleSaveGame} to="/games">
@@ -336,7 +341,7 @@ const Navbar = () => {
             </>
           )}
 
-          {listbox.sorted.visible && listbox.parent === "navbar" && (
+          {listbox.sorted.visible && listbox.parent === 'navbar' && (
             <Listbox
               listName="sorted"
               left="200px"
@@ -344,10 +349,10 @@ const Navbar = () => {
               position="fixed"
             />
           )}
-          {listbox.source.visible && listbox.parent === "navbar" && (
+          {listbox.source.visible && listbox.parent === 'navbar' && (
             <Listbox listName="source" left={0} right="auto" />
           )}
-          {listbox.genres.visible && listbox.parent === "navbar" && (
+          {listbox.genres.visible && listbox.parent === 'navbar' && (
             <Listbox listName="genres" left={0} right="auto" />
           )}
         </NavUl>

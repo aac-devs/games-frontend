@@ -1,25 +1,28 @@
-const baseUrl = "https://aac-games-app.herokuapp.com";
+// const baseUrl = 'https://aac-games-app.herokuapp.com';
+const baseUrl = 'http://localhost:8080';
 
-export const fetchingData = (endpoint, data, method = "GET", page = 1) => {
+const fetchingData = (endpoint, data, method = 'GET') => {
   const url = `${baseUrl}/${endpoint}`;
-  if (method === "GET") {
+  if (method === 'GET') {
     return fetch(url, {
       method,
-    });
-  } else if (method === "DELETE") {
-    return fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } else {
-    return fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
     });
   }
+  if (method === 'DELETE') {
+    return fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+  return fetch(url, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
 };
+
+export default fetchingData;
