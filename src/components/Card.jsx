@@ -31,7 +31,7 @@ const Container = styled.div`
     'gnr gnr';
 `;
 
-const ImageSection = styled.div`
+const ImageSection = styled(Link)`
   grid-area: img;
   background-color: cyan;
   min-width: 40%;
@@ -65,12 +65,6 @@ const Title = styled.div`
   width: 100%;
   display: block;
   overflow: hidden;
-`;
-
-const SpanLink = styled(Link)`
-  cursor: pointer;
-  color: ${textColor.primary.light};
-  text-decoration: none;
 `;
 
 const Released = styled.div`
@@ -189,12 +183,10 @@ const Card = memo(
     }
     return (
       <Container ref={setElement}>
-        <ImageSection>
+        <ImageSection to={`/games/detail/${id}`}>
           <img src={image} alt="ima" />
         </ImageSection>
-        <Title>
-          <SpanLink to={`/games/detail/${id}`}>{name}</SpanLink>
-        </Title>
+        <Title>{name}</Title>
         <Released>
           <h5>Released</h5>
           <span>{dayjs(released).format('MMMM D, YYYY')}</span>
@@ -223,11 +215,11 @@ const Card = memo(
 );
 
 Card.propTypes = {
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   image: PropTypes.string,
-  name: PropTypes.string,
-  released: PropTypes.string,
-  rating: PropTypes.number,
+  name: PropTypes.string.isRequired,
+  released: PropTypes.string.isRequired,
+  rating: PropTypes.number.isRequired,
   genres: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
@@ -239,11 +231,7 @@ Card.propTypes = {
 };
 
 Card.defaultProps = {
-  id: undefined,
   image: '',
-  name: 'name',
-  released: '',
-  rating: 3,
   genres: [],
   setElement: null,
   enableDelete: false,

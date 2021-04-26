@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pruebas en el componente <Badge /> debe mostrar <Badge /> correctamente 1`] = `
+<styled.div
+  background="#212121"
+  hasMarginRight={false}
+>
+  <styled.div
+    id="text"
+  >
+    PlayStation 4
+  </styled.div>
+</styled.div>
+`;

@@ -184,10 +184,11 @@ export const startSavingGame = () => {
       const method = gameId ? 'PUT' : 'POST';
       const endpoint = gameId ? `games/edit/${gameId}` : 'games/create';
       const resp = await fetchingData(endpoint, data, method);
-      const { ok, msg } = await resp.json();
+      const { ok, id, msg } = await resp.json();
       if (!ok) {
         dispatch(setError(msg));
       }
+      console.log({ id });
       dispatch(finishLoading());
       dispatch(resetTemporaryImage());
       dispatch(disableSavingGameFlag());

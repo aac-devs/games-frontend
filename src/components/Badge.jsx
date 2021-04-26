@@ -52,7 +52,7 @@ const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
       : backgroundColor.primary.normal;
   return (
     <BadgeContainer background={backColor} hasMarginRight={hasCloseButton}>
-      <BadgeText>{text}</BadgeText>
+      <BadgeText id="text">{text}</BadgeText>
       {hasCloseButton && (
         <BadgeButton onClick={() => handleClose(id, name)}>
           <i className="fas fa-times" />
@@ -64,7 +64,7 @@ const Badge = ({ id, text, name, hasCloseButton, handleClose }) => {
 
 Badge.propTypes = {
   id: PropTypes.number,
-  text: PropTypes.string,
+  text: PropTypes.string.isRequired,
   name: PropTypes.string,
   hasCloseButton: PropTypes.bool,
   handleClose: PropTypes.func,
@@ -72,8 +72,7 @@ Badge.propTypes = {
 
 Badge.defaultProps = {
   id: 1,
-  text: 'badge name',
-  name: 'category',
+  name: 'genres',
   hasCloseButton: false,
   handleClose: () => {},
 };
